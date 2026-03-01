@@ -5,19 +5,16 @@ import 'jspdf-autotable';
 export function Caducidad(items) {
     const date = new Date();
 
-    // 📄 Cambiar a horizontal ('landscape') y tamaño A4
     const doc = new jsPDF({ orientation: 'landscape', format: 'a4' });
 
-    // Encabezado
     doc.setFontSize(16);
     doc.text("SISTEMA PEPS", 10, 15);
     doc.setFontSize(8);
-    doc.text(date.toLocaleString() + ' (hora de Bolivia)', 200, 15);
+    doc.text(date.toLocaleString('es-BO') + ' (hora de Bolivia)', 200, 15);
     doc.setFontSize(14);
     doc.text('Lista de Caducidad', 130, 30);
     doc.line(120, 35, 185, 35, 'F');
 
-    // Columnas incluyendo Observaciones
     const columns = ['#', 'Código', 'Saldo', 'Costo Unitario', 'Costo Total', 'Fecha de Caducidad', 'Observaciones'];
 
     const data = items.map((item, index) => {
@@ -51,8 +48,8 @@ export function Caducidad(items) {
         body: data,
         styles: { fontSize: 8 },
         headStyles: {
-            fillColor: [137, 227, 183],
-            textColor: 0,
+            fillColor: [52, 73, 94],
+            textColor: 255,
             halign: 'center'
         },
         bodyStyles: { halign: 'center' }

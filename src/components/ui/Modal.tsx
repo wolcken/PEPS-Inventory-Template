@@ -35,9 +35,9 @@ export const Modal: React.FC<ModalProps> = ({
 
     const sizeClasses = {
         sm: 'max-w-sm',
-        md: 'max-w-md',
-        lg: 'max-w-lg',
-        xl: 'max-w-xl'
+        md: 'max-w-lg',
+        lg: 'max-w-4xl',
+        xl: 'max-w-6xl'
     };
 
     const dialogClass = sizeClasses[size] || sizeClasses.md;

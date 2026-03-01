@@ -8,7 +8,7 @@ const Scarce = ({ show, handleClose, low }: any) => {
 
     const items: any[] = [];
     low.forEach((item: any, index: number) => {
-        items.push([index, item.codigo, item.medicamento, item.saldo])
+        items.push([index, item.codigo, item.nombre, item.saldo])
     })
 
     const handlePDF = () => {
@@ -32,7 +32,7 @@ const Scarce = ({ show, handleClose, low }: any) => {
             show={show}
             onHide={handleClose}
             centered
-            size="xl"
+            size="lg"
             title="Lista de Unidades Bajas"
             footer={modalFooter}
         >

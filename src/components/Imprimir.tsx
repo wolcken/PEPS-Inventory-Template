@@ -3,10 +3,10 @@ import { PrintIcon } from '../components/ui/Icons'
 // @ts-ignore
 import { Movimientos } from '../tools/pdf/Movimientos'
 
-const Imprimir = ({ items, title }: any) => {
+const Imprimir = ({ items, title, headers }: any) => {
 
     const handlePDF = () => {
-        Movimientos(items, title)
+        Movimientos(items, title, headers)
     }
 
     return (

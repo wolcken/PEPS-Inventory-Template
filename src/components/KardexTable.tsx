@@ -3,7 +3,7 @@ import { PrintIcon } from '../components/ui/Icons'
 // @ts-ignore
 import { Kardex } from '../tools/pdf/Kardex';
 
-const KardexTable = ({ listMov, codigo, medicamento }: any) => {
+const KardexTable = ({ listMov, codigo, nombre }: any) => {
 
     var listMovimientos = listMov;
     const items: any[] = [];
@@ -13,28 +13,6 @@ const KardexTable = ({ listMov, codigo, medicamento }: any) => {
     }
 
     listMovimientos.sort(ordenarPorFechaNumber);
-
-    const style1 = {
-        background: 'var(--color-success-light)',
-        color: 'var(--color-success-dark)'
-    }
-
-    const style2 = {
-        background: 'var(--color-warning-light)',
-        color: 'var(--color-warning-dark)'
-    }
-
-    const style3 = {
-        background: 'var(--color-success-light)',
-        color: 'var(--color-success-dark)',
-        fontWeight: 600
-    }
-
-    const style4 = {
-        background: 'var(--color-warning-light)',
-        color: 'var(--color-warning-dark)',
-        fontWeight: 600
-    }
 
     var saldo1 = 0;
     var saldo2 = 0;
@@ -49,80 +27,80 @@ const KardexTable = ({ listMov, codigo, medicamento }: any) => {
             saldo2 -= (item.Costo_Unitario_Neto * item.CantidadS);
             items.push([String(item.FechaString).slice(4, 25), item.Movimiento, item.CantidadE, item.CantidadS, saldo1, item.Costo_Unitario_Neto, '', (item.Costo_Unitario_Neto * item.CantidadS).toFixed(2), (saldo2).toFixed(2)])
         }
-    })
+    });
 
     const handlePDF = () => {
-        Kardex(items, codigo, medicamento)
-    }
+        Kardex(items, codigo, nombre)
+    };
 
     var saldoUnidades = 0;
     var saldoCostos = 0;
 
     return (
-        <div className="position-relative mt-4">
-            <button className="btn btn-icon position-absolute border-0 bg-transparent text-secondary p-1" style={{ top: -45, right: 0 }} onClick={handlePDF} title="Imprimir Kardex">
+        <div className="relative mt-12 mb-8">
+            <button className="absolute -top-12 right-0 bg-transparent border-none text-text-secondary hover:text-primary p-2 transition-colors rounded-full hover:bg-surface-hover focus:outline-none" onClick={handlePDF} title="Imprimir Kardex">
                 <PrintIcon size={26} />
             </button>
 
-            <div className="table-responsive card p-0 shadow-sm border-0">
-                <table className="table table-bordered table-hover m-0 text-center align-middle" style={{ fontSize: '0.9rem' }}>
-                    <thead className="table-light font-semibold">
-                        <tr>
-                            <th colSpan={1} rowSpan={2} className="align-middle px-3">Fecha</th>
-                            <th colSpan={1} rowSpan={2} className="align-middle">Concepto</th>
-                            <th colSpan={3} className="bg-light">UNIDADES</th>
-                            <th colSpan={1} rowSpan={2} className="align-middle text-nowrap" style={{ width: 100 }}>Costo Unitario</th>
-                            <th colSpan={3} className="bg-light">COSTOS TOTALES</th>
+            <div className="overflow-x-auto rounded-lg shadow-[0_0_0_1px_var(--border-color)] bg-surface">
+                <table className="w-full text-center border-collapse whitespace-nowrap text-sm">
+                    <thead>
+                        <tr className="bg-surface-hover text-text-secondary font-semibold border-b border-border tracking-wide uppercase text-xs">
+                            <th colSpan={1} rowSpan={2} className="px-4 py-3 align-middle border-r border-border">Fecha</th>
+                            <th colSpan={1} rowSpan={2} className="px-4 py-3 align-middle border-r border-border">Concepto</th>
+                            <th colSpan={3} className="px-4 py-2 border-r border-border border-b border-border/50 bg-surface">Unidades</th>
+                            <th colSpan={1} rowSpan={2} className="px-4 py-3 align-middle border-r border-border">Costo Unit.</th>
+                            <th colSpan={3} className="px-4 py-2 border-b border-border/50 bg-surface">Costos Totales</th>
                         </tr>
-                        <tr>
-                            <th className="bg-success text-white py-2" style={{ opacity: 0.8 }}>Entrada</th>
-                            <th className="bg-warning text-dark py-2" style={{ opacity: 0.8 }}>Salida</th>
-                            <th className="bg-primary text-white py-2" style={{ opacity: 0.8 }}>Saldo</th>
-                            <th className="bg-success text-white py-2" style={{ opacity: 0.8 }}>Entrada</th>
-                            <th className="bg-warning text-dark py-2" style={{ opacity: 0.8 }}>Salida</th>
-                            <th className="bg-primary text-white py-2" style={{ opacity: 0.8 }}>Saldo</th>
+                        <tr className="text-xs uppercase tracking-wider text-white">
+                            <th className="px-3 py-2 bg-success/80 border-r border-white/20 font-medium">Entrada</th>
+                            <th className="px-3 py-2 bg-warning/80 text-text-inverse border-r border-white/20 font-medium">Salida</th>
+                            <th className="px-3 py-2 bg-primary/80 border-r border-white/20 font-medium tracking-widest text-white shadow-inner">Saldo</th>
+                            <th className="px-3 py-2 bg-success/80 border-r border-white/20 font-medium">Entrada</th>
+                            <th className="px-3 py-2 bg-warning/80 text-text-inverse border-r border-white/20 font-medium">Salida</th>
+                            <th className="px-3 py-2 bg-primary/80 font-medium tracking-widest text-white shadow-inner">Saldo</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-border">
                         {listMovimientos?.map((item: any, index: number) => {
                             var fecha = String(item.FechaString).slice(4, 25);
                             if (item.Movimiento === 'Entrada') {
                                 saldoUnidades += item.CantidadE;
                                 saldoCostos += (item.Costo_Unitario_Neto * item.CantidadE);
                                 return (
-                                    <tr key={index}>
-                                        <td style={style1} className="text-nowrap px-3">{fecha}</td>
-                                        <td style={style1}>{item.Movimiento}</td>
-                                        <td style={style1}>{item.CantidadE > 0 ? item.CantidadE : '-'}</td>
-                                        <td style={style1}>{item.CantidadS > 0 ? item.CantidadS : '-'}</td>
-                                        <td style={style3}>{saldoUnidades}</td>
-                                        <td style={style1}>{item.Costo_Unitario_Neto}</td>
-                                        <td style={style1}>{(item.Costo_Unitario_Neto * item.CantidadE).toFixed(2)}</td>
-                                        <td style={style1}>-</td>
-                                        <td style={style3}>{(saldoCostos).toFixed(2)}</td>
+                                    <tr key={index} className="hover:bg-surface-hover transition-colors">
+                                        <td className="px-4 py-3 border-r border-border text-text-secondary">{fecha}</td>
+                                        <td className="px-4 py-3 border-r border-border font-medium text-success">{item.Movimiento}</td>
+                                        <td className="px-4 py-3 border-r border-border text-success bg-success/5 font-semibold">{item.CantidadE > 0 ? item.CantidadE : '-'}</td>
+                                        <td className="px-4 py-3 border-r border-border text-text-muted">-</td>
+                                        <td className="px-4 py-3 border-r border-border text-primary font-bold bg-primary/5">{saldoUnidades}</td>
+                                        <td className="px-4 py-3 border-r border-border text-text-secondary">{item.Costo_Unitario_Neto}</td>
+                                        <td className="px-4 py-3 border-r border-border text-success bg-success/5 font-semibold">{(item.Costo_Unitario_Neto * item.CantidadE).toFixed(2)}</td>
+                                        <td className="px-4 py-3 border-r border-border text-text-muted">-</td>
+                                        <td className="px-4 py-3 text-primary font-bold bg-primary/5">{(saldoCostos).toFixed(2)}</td>
                                     </tr>
                                 )
                             } else {
                                 saldoUnidades -= item.CantidadS;
                                 saldoCostos -= (item.Costo_Unitario_Neto * item.CantidadS);
                                 return (
-                                    <tr key={index}>
-                                        <td style={style2} className="text-nowrap px-3">{fecha}</td>
-                                        <td style={style2}>{item.Movimiento}</td>
-                                        <td style={style2}>{item.CantidadE > 0 ? item.CantidadE : '-'}</td>
-                                        <td style={style2}>{item.CantidadS > 0 ? item.CantidadS : '-'}</td>
-                                        <td style={style4}>{saldoUnidades}</td>
-                                        <td style={style2}>{item.Costo_Unitario_Neto}</td>
-                                        <td style={style2}>-</td>
-                                        <td style={style2}>{(item.Costo_Unitario_Neto * item.CantidadS).toFixed(2)}</td>
-                                        <td style={style4}>{(saldoCostos).toFixed(2)}</td>
+                                    <tr key={index} className="hover:bg-surface-hover transition-colors">
+                                        <td className="px-4 py-3 border-r border-border text-text-secondary">{fecha}</td>
+                                        <td className="px-4 py-3 border-r border-border font-medium text-warning">{item.Movimiento}</td>
+                                        <td className="px-4 py-3 border-r border-border text-text-muted">-</td>
+                                        <td className="px-4 py-3 border-r border-border text-warning bg-warning/5 font-semibold">{item.CantidadS > 0 ? item.CantidadS : '-'}</td>
+                                        <td className="px-4 py-3 border-r border-border text-primary font-bold bg-primary/5">{saldoUnidades}</td>
+                                        <td className="px-4 py-3 border-r border-border text-text-secondary">{item.Costo_Unitario_Neto}</td>
+                                        <td className="px-4 py-3 border-r border-border text-text-muted">-</td>
+                                        <td className="px-4 py-3 border-r border-border text-warning bg-warning/5 font-semibold">{(item.Costo_Unitario_Neto * item.CantidadS).toFixed(2)}</td>
+                                        <td className="px-4 py-3 text-primary font-bold bg-primary/5">{(saldoCostos).toFixed(2)}</td>
                                     </tr>
                                 )
                             }
                         })}
                         {(!listMovimientos || listMovimientos.length === 0) && (
                             <tr>
-                                <td colSpan={9} className="text-center py-4 text-muted">
+                                <td colSpan={9} className="text-center py-12 text-text-muted bg-surface-hover/50">
                                     No hay movimientos registrados para este insumo.
                                 </td>
                             </tr>

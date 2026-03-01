@@ -89,7 +89,11 @@ const Salidas = () => {
 
       {/* Botón para imprimir */}
       <div className="mt-6">
-        <Imprimir items={items} title='Salidas' />
+        <Imprimir
+          items={items}
+          title='Salidas'
+          headers={['#', 'Código', 'Fecha', 'Factura', 'Cantidad', 'Costo U. Neto']}
+        />
       </div>
     </div>
   );

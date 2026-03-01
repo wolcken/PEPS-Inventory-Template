@@ -12,6 +12,8 @@ const Entradas = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
 
+    console.log(listKardexEntrada);
+
     const sortedEntries = useMemo(() => {
         return [...listKardexEntrada].sort((a: any, b: any) =>
             new Date(b.FechaString).getTime() - new Date(a.FechaString).getTime()
@@ -153,7 +155,11 @@ const Entradas = () => {
 
             <Low show={show} handleClose={handleClose} mincad={sortedLowStock} />
             <div className="mt-6">
-                <Imprimir items={items} title="Entradas" />
+                <Imprimir
+                    items={items}
+                    title="Entradas"
+                    headers={['#', 'Código', 'Nombre', 'Fecha', 'Cantidad', 'Precio U.', 'Costo U. Neto']}
+                />
             </div>
 
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} title="Eliminar Entrada" centered>

@@ -8,7 +8,8 @@ const Low = ({ show, handleClose, mincad }: any) => {
 
     const items: any[] = [];
     mincad.forEach((item: any, index: number) => {
-        items.push([index, item.Codigo, item.Nombre, item.Saldo, item.Costo_Unitario_Neto, (item.Saldo * item.Costo_Unitario_Neto).toFixed(2), item.Caducidad]);
+        const nombre = item.Nombre || item.Medicamento || '';
+        items.push([index, item.Codigo, nombre, item.Saldo, item.Costo_Unitario_Neto, (item.Saldo * item.Costo_Unitario_Neto).toFixed(2), item.Caducidad]);
     })
 
     const handlePDF = () => {
@@ -32,7 +33,7 @@ const Low = ({ show, handleClose, mincad }: any) => {
             show={show}
             onHide={handleClose}
             centered
-            size='xl'
+            size='lg'
             title="Lista de Caducidad"
             footer={modalFooter}
         >

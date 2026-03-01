@@ -159,7 +159,8 @@ export class InventoryController {
             Total_Operacion: Total_Operacion,
             Valor_Neto: Valor_Neto,
             Costo_Unitario_Neto: Costo_Unitario_Neto,
-            Saldo: Number(dates.Cantidad) // Init Saldo to full Cantidad
+            Saldo: Number(dates.Cantidad), // Init Saldo to full Cantidad
+            Nombre: String(dates.Nombre || '')
         });
 
         // FUTURE ENHANCEMENT: If there were 'PENDING' outbound records, process them now with 

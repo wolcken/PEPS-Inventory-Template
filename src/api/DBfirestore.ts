@@ -142,7 +142,8 @@ const createKardexEntrada = async (date: any) => {
             Total_Operacion: Number(date.Total_Operacion),
             Valor_Neto: Number(date.Valor_Neto),
             Costo_Unitario_Neto: Number(date.Costo_Unitario_Neto),
-            Saldo: Number(date.Cantidad)
+            Saldo: Number(date.Cantidad),
+            Nombre: String(date.Nombre || date.Medicamento || '')
         });
         alert('Registro creado con exito');
     } catch (error) {

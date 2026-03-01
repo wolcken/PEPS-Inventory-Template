@@ -12,7 +12,7 @@ const Inicio = () => {
                 <PackageIcon size={80} />
             </div>
             <h1 className="text-4xl font-bold text-text-primary mb-4 leading-tight">Primeros en Entrar,<br />Primeros en Salir</h1>
-            <p className="text-lg text-text-secondary mt-2 bg-surface-hover px-4 py-2 rounded-full border border-border">Usuario activo: <strong>{user?.email}</strong></p>
+            <p className="text-sm text-text-secondary mt-2 bg-surface-hover px-4 py-2 rounded-full border border-border">Usuario activo: <strong>{user?.email}</strong></p>
         </div>
     )
 }
