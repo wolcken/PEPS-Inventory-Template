@@ -2,7 +2,8 @@ import React, { useState } from 'react'
 import apiObject from '../api/DBfirestore';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
+import { useToast } from '../context/ToastContext';
 import { ListInventory } from '../utils/ListInventory';
 import { app } from '../firebase';
 import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
@@ -17,8 +18,8 @@ const KardexSalida = () => {
     const objetoActionStr = new Date(accion).toLocaleDateString()
 
     const listInsumos = apiObject.useInsumos();
-
     const listInventory = ListInventory();
+    const { addToast } = useToast();
 
     const [saldo, setSaldo] = useState<number | string>('');
 
@@ -26,6 +27,7 @@ const KardexSalida = () => {
     const [listItems, setListItems] = useState<any[]>([]);
 
     const [validated, setValidated] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [dates, setDates] = useState({
         id_Insumo: '',
@@ -63,9 +65,9 @@ const KardexSalida = () => {
         setCantidad(value)
     }
 
-    const handleSelectInsumo = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleSelectInsumo = (selectedValue: string) => {
         listInsumos.forEach((insumo: any) => {
-            if (String(event.target.value) === String(insumo.id)) {
+            if (String(selectedValue) === String(insumo.id)) {
                 setOptionInsumo({
                     id: insumo.id,
                     Codigo: insumo.Codigo,
@@ -82,13 +84,13 @@ const KardexSalida = () => {
             }
         });
         listInventory.forEach((item: any) => {
-            if (String(event.target.value) === String(item.id)) {
+            if (String(selectedValue) === String(item.id)) {
                 setSaldo(item.saldo);
             }
         });
         const getListEntradasforItem = async () => {
             try {
-                const itemRef = doc(db, 'Insumos', event.target.value);
+                const itemRef = doc(db, 'Insumos', selectedValue);
                 const docSnap = await getDoc(itemRef);
                 if (docSnap.exists()) {
                     // console.log("Document data:", docSnap.data().Codigo);
@@ -113,37 +115,35 @@ const KardexSalida = () => {
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         setValidated(true);
-        if (
-            dates.id_Insumo !== '' &&
-            dates.FechaString !== '' &&
-            dates.Nit !== '' &&
-            dates.Cliente !== '' &&
-            dates.Factura !== '' &&
-            cantidad !== ''
-        ) {
-            const confirmacion = window.confirm("¿Estás seguro de Registrar una Salida?");
-            if (confirmacion) {
-                try {
-                    // LLamada al nuevo Controlador que abstrae PEPS y BD
-                    const ImportInventoryController = await import('../api/InventoryController');
-                    const InventoryController = ImportInventoryController.InventoryController;
 
-                    const result = await InventoryController.registerOutflow(dates, Number(cantidad));
+        if (!dates.id_Insumo || !dates.FechaString || !dates.Nit || !dates.Cliente || !dates.Factura || !cantidad) {
+            addToast({ message: 'Por favor, ingresa los datos de salida.', variant: 'warning' });
+            return;
+        }
 
-                    handleClear();
-                    window.location.hash = 'salidas';
+        setIsLoading(true);
 
-                    if (result.status === 'PENDING') {
-                        alert(`Stock insuficiente. Se registró la salida de ${result.totalQuantityProcessed} unidades y quedaron ${result.remainingQuantityToProcess} en estado Pendiente (Backorder).`);
-                    } else if (result.status === 'COMPLETED') {
-                        alert('Salida registrada con éxito');
-                    }
+        try {
+            // LLamada al nuevo Controlador que abstrae PEPS y BD
+            const ImportInventoryController = await import('../api/InventoryController');
+            const InventoryController = ImportInventoryController.InventoryController;
 
-                } catch (error: any) {
-                    console.error("Error al procesar salida PEPS: ", error);
-                    alert("Error: " + error.message);
-                }
+            const result = await InventoryController.registerOutflow(dates, Number(cantidad));
+
+            handleClear();
+            window.location.hash = 'salidas';
+
+            if (result.status === 'PENDING') {
+                addToast({ message: `Stock insuficiente. Salida parcial: ${result.totalQuantityProcessed}, Pendientes: ${result.remainingQuantityToProcess}.`, variant: 'warning' });
+            } else if (result.status === 'COMPLETED') {
+                addToast({ message: 'Salida registrada con éxito', variant: 'success' });
             }
+
+        } catch (error: any) {
+            console.error("Error al procesar salida PEPS: ", error);
+            addToast({ message: error.message || 'Error al guardar el Kardex de Salida', variant: 'warning' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -170,10 +170,11 @@ const KardexSalida = () => {
             <form className='card p-4 shadow-sm bg-surface' noValidate onSubmit={handleSubmit}>
 
                 <h5 className="mb-3 border-bottom pb-2">Selección de Insumo</h5>
-                <Select
-                    className='mb-4'
+                <SearchableSelect
+                    className='mb-4 w-100'
                     value={optionInsumo.id}
                     onChange={handleSelectInsumo}
+                    placeholder="Busca por Nombre o Código..."
                     options={listInsumos.map((i: any) => ({ value: i.id, label: `${i.Codigo} - ${i.Nombre || i.Medicamento}` }))}
                 />
 
@@ -269,7 +270,11 @@ const KardexSalida = () => {
                 </div>
 
                 <div className="mt-4 pt-3 border-top text-right">
-                    <Button type="submit" variant="primary" size="lg">Registrar Salida de Inventario</Button>
+                    <Button type="submit" variant="primary" size="lg" disabled={isLoading}>
+                        {isLoading ? (
+                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        ) : 'Registrar Salida de Inventario'}
+                    </Button>
                 </div>
             </form>
         </div>

@@ -2,14 +2,19 @@ import React, { useState } from 'react'
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
+import { useToast } from '../context/ToastContext';
 import apiObject from '../api/DBfirestore';
 
 const RegisterProviders = ({ show, handleClose }) => {
 
     const [validated, setValidated] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const { addToast } = useToast();
 
     const [date, setDate] = useState({
         Empresa: '',
+        Nit: '',
+        Email: '',
         Celular: '',
         Direccion: ''
     });
@@ -20,20 +25,33 @@ const RegisterProviders = ({ show, handleClose }) => {
         });
     };
 
-    const handleSave = (event) => {
+    const handleSave = async (event) => {
         event.preventDefault();
         setValidated(true);
-        if (date.Empresa !== ''
-            && date.Celular !== ''
-            && date.Direccion !== '') {
-            apiObject.createProvider(date);
+
+        if (!date.Empresa || !date.Nit || !date.Celular || !date.Direccion) {
+            addToast({ message: 'Por favor completa los campos requeridos.', variant: 'warning' });
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            await apiObject.createProvider(date);
+            addToast({ message: 'Proveedor registrado correctamente!', variant: 'success' });
             handleExit();
+        } catch (error) {
+            addToast({ message: error.message || 'Error al guardar el proveedor', variant: 'danger' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleClear = () => {
         setDate({
             Empresa: '',
+            Nit: '',
+            Email: '',
             Celular: '',
             Direccion: ''
         });
@@ -47,8 +65,12 @@ const RegisterProviders = ({ show, handleClose }) => {
 
     const modalFooter = (
         <div className="d-flex justify-content-between w-100 mt-2">
-            <Button variant='outline-primary' onClick={handleClear}>Limpiar</Button>
-            <Button variant='primary' onClick={handleSave}>Guardar</Button>
+            <Button variant='outline-primary' onClick={handleClear} disabled={isLoading}>Limpiar</Button>
+            <Button variant='primary' onClick={handleSave} disabled={isLoading}>
+                {isLoading ? (
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                ) : 'Guardar'}
+            </Button>
         </div>
     );
 
@@ -73,15 +95,38 @@ const RegisterProviders = ({ show, handleClose }) => {
                         error={validated && !date.Empresa ? "Introduce un Nombre de la Empresa." : ""}
                     />
                 </div>
+                <div className="d-flex gap-3 mb-3">
+                    <div className="w-50">
+                        <Input
+                            label="NIT"
+                            required
+                            type="number"
+                            placeholder="NIT o RUC"
+                            value={date.Nit}
+                            onChange={(e) => handleChanges('Nit', e.target.value)}
+                            error={validated && !date.Nit ? "Introduzca el NIT." : ""}
+                        />
+                    </div>
+                    <div className="w-50">
+                        <Input
+                            label="Celular"
+                            required
+                            type="number"
+                            placeholder="Numero de Celular"
+                            value={date.Celular}
+                            onChange={(e) => handleChanges('Celular', e.target.value)}
+                            error={validated && !date.Celular ? "Requerido." : ""}
+                        />
+                    </div>
+                </div>
                 <div className="mb-3">
                     <Input
-                        label="Celular"
-                        required
-                        type="number"
-                        placeholder="Numero de Celular"
-                        value={date.Celular}
-                        onChange={(e) => handleChanges('Celular', e.target.value)}
-                        error={validated && !date.Celular ? "Introduzca el Numero de Celular." : ""}
+                        label="Correo Electrónico"
+                        type="email"
+                        placeholder="proveedor@email.com (Opcional)"
+                        value={date.Email}
+                        onChange={(e) => handleChanges('Email', e.target.value)}
+                        error={validated && date.Email && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(date.Email) ? "Formato inválido" : ""}
                     />
                 </div>
                 <div className="mb-3">
@@ -89,7 +134,7 @@ const RegisterProviders = ({ show, handleClose }) => {
                         label="Direccion"
                         required
                         type="text"
-                        placeholder="Direccion de la Empresa"
+                        placeholder="Direccion postal o física"
                         value={date.Direccion}
                         onChange={(e) => handleChanges('Direccion', e.target.value)}
                         error={validated && !date.Direccion ? "Introduce la Direccion." : ""}

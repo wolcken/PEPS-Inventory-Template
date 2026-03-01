@@ -2,11 +2,14 @@ import React, { useState } from 'react'
 import { Button } from '../components/ui/Button';
 import { Modal } from '../components/ui/Modal';
 import { Input } from '../components/ui/Input';
+import { useToast } from '../context/ToastContext';
 import apiObject from '../api/DBfirestore';
 
 const RegisterInsumos = ({ show, handleClose }) => {
 
     const [validated, setValidated] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const { addToast } = useToast();
 
     const [date, setDate] = useState({
         Codigo: '',
@@ -15,8 +18,14 @@ const RegisterInsumos = ({ show, handleClose }) => {
         UnidadMedida: ''
     });
 
+    React.useEffect(() => {
+        if (show) {
+            const randomSuffix = Math.random().toString(36).substring(2, 8).toUpperCase();
+            setDate(prev => ({ ...prev, Codigo: `INS-${randomSuffix}` }));
+        }
+    }, [show]);
+
     const handleChanges = (name, value) => {
-        // Si el campo es "Codigo", transformamos el texto
         if (name === "Codigo") {
             value = value.toUpperCase().replace(/\s+/g, "_");
         }
@@ -32,18 +41,21 @@ const RegisterInsumos = ({ show, handleClose }) => {
         setValidated(true);
 
         if (!date.Codigo || !date.Medicamento || !date.Descripcion || !date.UnidadMedida) {
-            alert('⚠️ Todos los campos son obligatorios.');
+            addToast({ message: 'Todos los campos son obligatorios.', variant: 'warning' });
             return;
         }
 
-        const exists = await apiObject.checkInsumoExists(date.Codigo);
-        if (exists) {
-            alert('⚠️ Error: Ya existe un insumo con este código.');
-            return;
-        }
+        setIsLoading(true);
 
-        await apiObject.createInsumo(date);
-        handleExit();
+        try {
+            await apiObject.createInsumo(date);
+            addToast({ message: 'Insumo registrado correctamente!', variant: 'success' });
+            handleExit();
+        } catch (error) {
+            addToast({ message: error.message || 'Error al guardar el insumo', variant: 'danger' });
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const handleClear = () => {
@@ -63,8 +75,12 @@ const RegisterInsumos = ({ show, handleClose }) => {
 
     const modalFooter = (
         <div className="d-flex justify-content-between w-100 mt-2">
-            <Button variant='outline-primary' onClick={handleClear}>Limpiar</Button>
-            <Button variant='primary' onClick={handleSave}>Guardar</Button>
+            <Button variant='outline-primary' onClick={handleClear} disabled={isLoading}>Limpiar</Button>
+            <Button variant='primary' onClick={handleSave} disabled={isLoading}>
+                {isLoading ? (
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                ) : 'Guardar'}
+            </Button>
         </div>
     );
 

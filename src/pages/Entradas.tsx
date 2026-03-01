@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
+import { useToast } from '../context/ToastContext';
 import apiObject from '../api/DBfirestore';
 import Imprimir from '../components/Imprimir';
 import Low from '../components/Low';
@@ -66,11 +68,26 @@ const Entradas = () => {
         item.Costo_Unitario_Neto
     ]);
 
-    // 🔥 Nueva función para confirmar antes de eliminar
-    const handleDelete = (id: string) => {
-        const confirmDelete = window.confirm("¿Estás seguro que deseas eliminar esta entrada?");
-        if (confirmDelete) {
-            apiObject.deleteKardexEntrada(id);
+    const { addToast } = useToast();
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [itemToDelete, setItemToDelete] = useState('');
+
+    const confirmDelete = (id: string) => {
+        setItemToDelete(id);
+        setShowDeleteModal(true);
+    };
+
+    const handleDelete = async () => {
+        if (itemToDelete) {
+            try {
+                await apiObject.deleteKardexEntrada(itemToDelete);
+                addToast({ message: 'Entrada eliminada con éxito.', variant: 'success' });
+            } catch (error: any) {
+                addToast({ message: error.message || 'Error al eliminar entrada.', variant: 'danger' });
+            } finally {
+                setShowDeleteModal(false);
+                setItemToDelete('');
+            }
         }
     };
 
@@ -104,7 +121,7 @@ const Entradas = () => {
                                     <td>{kardex.Precio_Unitario}</td>
                                     <td>{kardex.Costo_Unitario_Neto}</td>
                                     <td className="text-center">
-                                        <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => handleDelete(kardex.id)} title="Eliminar Entrada">
+                                        <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => confirmDelete(kardex.id)} title="Eliminar Entrada">
                                             <TrashIcon size={20} />
                                         </button>
                                     </td>
@@ -137,6 +154,20 @@ const Entradas = () => {
             <div className="mt-4">
                 <Imprimir items={items} title="Entradas" />
             </div>
+
+            <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} title="Eliminar Entrada" centered>
+                <p className="mb-0 text-center" style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+                    ¿Estás seguro que deseas eliminar esta entrada permanentemente?
+                </p>
+                <div className="d-flex justify-content-center gap-3 mt-4 pt-2">
+                    <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
+                        Cancelar
+                    </Button>
+                    <Button variant="danger" onClick={handleDelete}>
+                        Sí, Eliminar
+                    </Button>
+                </div>
+            </Modal>
         </div>
     );
 };

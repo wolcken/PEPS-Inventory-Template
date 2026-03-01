@@ -1,7 +1,8 @@
 import React, { useState } from 'react'
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
-import { Select } from '../components/ui/Select';
+import { SearchableSelect } from '../components/ui/SearchableSelect';
+import { useToast } from '../context/ToastContext';
 import apiObject from '../api/DBfirestore';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -15,10 +16,11 @@ const KardexEntrada = () => {
     const objetoAction = new Date(accion);
 
     const listInsumos = apiObject.useInsumos();
-
     const listProviders = apiObject.useProviders();
+    const { addToast } = useToast();
 
     const [validated, setValidated] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [dates, setDates] = useState({
         id_Insumo: '',
@@ -84,9 +86,9 @@ const KardexEntrada = () => {
         });
     }
 
-    const handleSelectInsumo = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleSelectInsumo = (selectedValue: string) => {
         listInsumos.forEach((insumo: any) => {
-            if (String(event.target.value) === String(insumo.id)) {
+            if (String(selectedValue) === String(insumo.id)) {
                 setOptionInsumo({
                     id: insumo.id,
                     Codigo: insumo.Codigo,
@@ -103,11 +105,16 @@ const KardexEntrada = () => {
         });
     };
 
-    const handleSelectProvider = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleSelectProvider = (selectedValue: string) => {
+        const selectedId = String(selectedValue);
         listProviders.forEach((provider: any) => {
-            if (String(event.target.value) === String(provider.id)) {
+            if (selectedId === String(provider.id)) {
                 setOptionProvider(provider.id);
-                setDates({ ...dates, id_Provider: provider.id });
+                setDates(prevDates => ({
+                    ...prevDates,
+                    id_Provider: provider.id,
+                    Nit: provider.Nit ? String(provider.Nit) : '' // 💡 NUEVO REQUERIMIENTO: AUTOFILL NIT
+                }));
             }
         });
     }
@@ -115,25 +122,26 @@ const KardexEntrada = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setValidated(true);
-        if (
-            dates.id_Insumo !== '' &&
-            dates.id_Provider !== '' &&
-            dates.FechaString !== '' &&
-            dates.Nit !== '' &&
-            dates.Factura !== ''
-        ) {
-            const confirmacion = window.confirm("¿Estás seguro de Registrar una Entrada?");
-            if (confirmacion) {
-                try {
-                    const ImportInventoryController = await import('../api/InventoryController');
-                    const InventoryController = ImportInventoryController.InventoryController;
-                    await InventoryController.registerInflow(dates);
-                    handleClear();
-                    window.location.hash = 'entradas';
-                } catch (error) {
-                    console.log(error);
-                }
-            }
+
+        if (!dates.id_Insumo || !dates.id_Provider || !dates.FechaString || !dates.Nit || !dates.Factura || !dates.Cantidad || !dates.Precio_Unitario) {
+            addToast({ message: 'Por favor, completa todos los campos requeridos.', variant: 'warning' });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const ImportInventoryController = await import('../api/InventoryController');
+            const InventoryController = ImportInventoryController.InventoryController;
+            await InventoryController.registerInflow(dates);
+
+            addToast({ message: 'Registro de entrada guardado con éxito.', variant: 'success' });
+            handleClear();
+            window.location.hash = 'entradas';
+        } catch (error: any) {
+            console.error(error);
+            addToast({ message: error.message || 'Ocurrió un error al registrar la entrada.', variant: 'warning' });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -161,10 +169,11 @@ const KardexEntrada = () => {
             <h3 className="mb-4">Kardex de Entrada</h3>
             <form className='card p-4 shadow-sm bg-surface' noValidate onSubmit={handleSubmit}>
                 <h5 className="mb-3 border-bottom pb-2">Selección de Insumo</h5>
-                <Select
-                    className='mb-4'
+                <SearchableSelect
+                    className='mb-4 w-100'
                     value={optionInsumo.id}
                     onChange={handleSelectInsumo}
+                    placeholder="Busca por Nombre o Código..."
                     options={listInsumos.map((i: any) => ({ value: i.id, label: `${i.Codigo} - ${i.Nombre || i.Medicamento}` }))}
                 />
 
@@ -206,10 +215,11 @@ const KardexEntrada = () => {
 
                 <div className="d-flex flex-wrap gap-4 mb-3">
                     <div className="flex-grow-1" style={{ minWidth: '250px' }}>
-                        <Select
+                        <SearchableSelect
                             label="Proveedor"
                             value={optionProvider}
                             onChange={handleSelectProvider}
+                            placeholder="Busca Nombre de Empresa..."
                             options={listProviders.map((p: any) => ({ value: p.id, label: p.Empresa }))}
                         />
                     </div>
@@ -291,7 +301,11 @@ const KardexEntrada = () => {
                 </div>
 
                 <div className="mt-4 pt-3 border-top text-right">
-                    <Button type="submit" variant="primary" size="lg">Registrar Entrada al Inventario</Button>
+                    <Button type="submit" variant="primary" size="lg" disabled={isLoading}>
+                        {isLoading ? (
+                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        ) : 'Registrar Entrada al Inventario'}
+                    </Button>
                 </div>
             </form>
         </div>

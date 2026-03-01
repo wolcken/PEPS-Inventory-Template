@@ -23,20 +23,19 @@ const createInsumo = async (date: any) => {
 
         const exists = await checkInsumoExists(formattedCodigo);
         if (exists) {
-            alert('⚠️ Error: El código ya existe.');
-            return;
+            throw new Error('El código ya existe.');
         }
 
         await setDoc(doc(insumoRef), {
             Codigo: formattedCodigo, // Almacenamos el código transformado
-            Nombre: String(date.Nombre), // REFACTOR: Using Nombre instead of Medicamento
+            Nombre: String(date.Medicamento || date.Nombre), // REFACTOR: Fallback to either input state binding
             Descripcion: String(date.Descripcion),
             UnidadMedida: String(date.UnidadMedida)
         });
 
-        alert('✅ Insumo creado con éxito');
-    } catch (error) {
-        console.error("Error al crear el insumo:", error);
+        return { success: true, message: 'Insumo creado con éxito' };
+    } catch (error: any) {
+        throw error;
     }
 };
 
@@ -68,9 +67,9 @@ const useInsumos = () => {
 const deleteInsumo = async (id: string) => {
     try {
         await deleteDoc(doc(db, 'Insumos', id))
-        alert('Eliminado con exito')
-    } catch (error) {
-        console.log(error)
+        return { success: true };
+    } catch (error: any) {
+        throw error;
     }
 }
 
@@ -80,12 +79,14 @@ const createProvider = async (date: any) => {
     try {
         await setDoc(doc(providerRef), {
             Empresa: String(date.Empresa),
+            Nit: Number(date.Nit),
+            Email: String(date.Email),
             Celular: Number(date.Celular),
             Direccion: String(date.Direccion)
         });
-        alert('Proveedor creado con exito');
-    } catch (error) {
-        console.log(error);
+        return { success: true, message: 'Proveedor creado con éxito' };
+    } catch (error: any) {
+        throw error;
     }
 }
 
@@ -117,9 +118,9 @@ const useProviders = () => {
 const deleteProvider = async (id: string) => {
     try {
         await deleteDoc(doc(db, 'Providers', id))
-        alert('Eliminado con exito')
-    } catch (error) {
-        console.log(error)
+        return { success: true };
+    } catch (error: any) {
+        throw error;
     }
 }
 
@@ -153,9 +154,9 @@ const createKardexEntrada = async (date: any) => {
 const deleteKardexEntrada = async (id: string) => {
     try {
         await deleteDoc(doc(db, 'KardexEntrada', id));
-        alert('Entrada eliminada con éxito');
-    } catch (error) {
-        console.error('Error al eliminar la entrada:', error);
+        return { success: true };
+    } catch (error: any) {
+        throw error;
     }
 };
 
