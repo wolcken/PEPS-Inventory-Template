@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import ProveedoresList from '../components/ProveedoresList';
 import { Button } from 'react-bootstrap';
+// @ts-ignore
 import RegisterProviders from '../tools/RegisterProviders';
 
 const Proveedores = () => {

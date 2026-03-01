@@ -11,8 +11,8 @@ const Entradas = () => {
     const itemsPerPage = 10;
 
     const sortedEntries = useMemo(() => {
-        return [...listKardexEntrada].sort((a, b) =>
-            new Date(b.FechaString) - new Date(a.FechaString)
+        return [...listKardexEntrada].sort((a: any, b: any) =>
+            new Date(b.FechaString).getTime() - new Date(a.FechaString).getTime()
         );
     }, [listKardexEntrada]);
 
@@ -21,7 +21,7 @@ const Entradas = () => {
     const currentItems = sortedEntries.slice(indexOfFirstItem, indexOfLastItem);
     const totalPages = Math.ceil(sortedEntries.length / itemsPerPage);
 
-    const handlePageChange = (pageNumber) => {
+    const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
     };
 
@@ -32,7 +32,7 @@ const Entradas = () => {
             if (!item?.Caducidad) return false;
 
             const fechaCaducidad = new Date(item.Caducidad);
-            const diferenciaDias = Math.floor((fechaCaducidad - fechaActual) / (1000 * 60 * 60 * 24));
+            const diferenciaDias = Math.floor((fechaCaducidad.getTime() - fechaActual.getTime()) / (1000 * 60 * 60 * 24));
 
             const estaPorCaducar = diferenciaDias >= 0 && diferenciaDias <= 20;
             const yaCaducadoConSaldo = diferenciaDias < 0 && item.Saldo > 0;
@@ -41,7 +41,7 @@ const Entradas = () => {
         });
     }, [sortedEntries]);
 
-    const sortedLowStock = [...lowStock].sort((a, b) => new Date(b.Caducidad) - new Date(a.Caducidad));
+    const sortedLowStock = [...lowStock].sort((a: any, b: any) => new Date(b.Caducidad).getTime() - new Date(a.Caducidad).getTime());
 
     const [show, setShow] = useState(false);
     const [bandera, setBandera] = useState(true);
@@ -67,7 +67,7 @@ const Entradas = () => {
     ]);
 
     // 🔥 Nueva función para confirmar antes de eliminar
-    const handleDelete = (id) => {
+    const handleDelete = (id: string) => {
         const confirmDelete = window.confirm("¿Estás seguro que deseas eliminar esta entrada?");
         if (confirmDelete) {
             apiObject.deleteKardexEntrada(id);

@@ -12,8 +12,8 @@ const Salidas = () => {
 
   // Ordenar por fecha (de más reciente a más antigua)
   const sortedEntries = useMemo(() => {
-    return [...listKardexSalida].sort((a, b) => 
-      new Date(b.FechaString) - new Date(a.FechaString)
+    return [...listKardexSalida].sort((a: any, b: any) =>
+      new Date(b.FechaString).getTime() - new Date(a.FechaString).getTime()
     );
   }, [listKardexSalida]);
 
@@ -24,7 +24,7 @@ const Salidas = () => {
   const totalPages = Math.ceil(sortedEntries.length / itemsPerPage);
 
   // Cambiar página
-  const handlePageChange = (pageNumber) => {
+  const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
 

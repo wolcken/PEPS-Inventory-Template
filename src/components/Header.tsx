@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Container, Nav, NavDropdown, Navbar, Offcanvas } from 'react-bootstrap'
 import { AuthContext } from '../context/AuthProvider'
 import { signOut } from 'firebase/auth';
-import { auth } from '../firebase/Credenciales';
+import { auth } from '../firebase';
 
 const Header = () => {
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import apiObject from '../api/DBfirestore';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 import { ListInventory } from '../utils/ListInventory';
-import { app } from '../firebase/Credenciales';
+import { app } from '../firebase';
 import { collection, doc, getDoc, getDocs, getFirestore, orderBy, query, where } from 'firebase/firestore';
 
 const db = getFirestore(app);
@@ -10,22 +10,25 @@ const db = getFirestore(app);
 const KardexSalida = () => {
 
     const accion = Date.now();
-    const objetoAction = new Date(accion);
+
+    // We store the Date string instead of Date object to satisfy the input format
+    const objetoActionStr = new Date(accion).toLocaleDateString()
 
     const listInsumos = apiObject.useInsumos();
 
     const listInventory = ListInventory();
 
-    const [saldo, setSaldo] = useState('');
+    const [saldo, setSaldo] = useState<number | string>('');
 
-    const [listItems, setListItems] = useState([]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const [listItems, setListItems] = useState<any[]>([]);
 
     const [validated, setValidated] = useState(false);
 
     const [dates, setDates] = useState({
         id_Insumo: '',
         Codigo: '',
-        FechaString: objetoAction,
+        FechaString: objetoActionStr, // Initialized as string
         Nit: '',
         Cliente: '',
         Factura: '',
@@ -35,12 +38,12 @@ const KardexSalida = () => {
         // Costo_Venta: ''
     });
 
-    const [cantidad, setCantidad] = useState('');
+    const [cantidad, setCantidad] = useState<string>('');
 
     const [optionInsumo, setOptionInsumo] = useState({
         id: '',
         Codigo: '',
-        Medicamento: '',
+        Nombre: '', // Replaced Medicamento
         Descripcion: '',
         UnidadMedida: ''
     });
@@ -48,24 +51,23 @@ const KardexSalida = () => {
     // const listSaldos = apiObject.useListEntrada(optionInsumo.Codigo);
     // console.log(listSaldos)
 
-    const handleChanges = (name, value) => {
+    const handleChanges = (name: string, value: string) => {
         setDates({
             ...dates, [name]: value
         });
     };
 
-    const handleCantidad = (value) => {
+    const handleCantidad = (value: string) => {
         setCantidad(value)
     }
 
-    const handleSelectInsumo = (event) => {
-        console.log(event.target.label)
-        listInsumos.forEach((insumo) => {
+    const handleSelectInsumo = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        listInsumos.forEach((insumo: any) => {
             if (String(event.target.value) === String(insumo.id)) {
                 setOptionInsumo({
                     id: insumo.id,
                     Codigo: insumo.Codigo,
-                    Medicamento: insumo.Medicamento,
+                    Nombre: insumo.Nombre || insumo.Medicamento, // Data mapping fallback
                     Descripcion: insumo.Descripcion,
                     UnidadMedida: insumo.UnidadMedida
                 });
@@ -77,7 +79,7 @@ const KardexSalida = () => {
                 })
             }
         });
-        listInventory.forEach((item) => {
+        listInventory.forEach((item: any) => {
             if (String(event.target.value) === String(item.id)) {
                 setSaldo(item.saldo);
             }
@@ -91,7 +93,7 @@ const KardexSalida = () => {
                     const entradaRef = collection(db, 'KardexEntrada');
                     const q = query(entradaRef, where("Codigo", "==", String(docSnap.data().Codigo)), orderBy("FechaNumber", "asc"));
                     const querySnapshot = await getDocs(q);
-                    const docs = [];
+                    const docs: any[] = [];
                     querySnapshot.forEach((doc) => {
                         docs.push({ ...doc.data(), id: doc.id })
                     });
@@ -106,7 +108,7 @@ const KardexSalida = () => {
         getListEntradasforItem()
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event: any) => {
         event.preventDefault();
         setValidated(true);
         if (
@@ -120,42 +122,24 @@ const KardexSalida = () => {
             const confirmacion = window.confirm("¿Estás seguro de Registrar una Salida?");
             if (confirmacion) {
                 try {
-                    // apiObject.createKardexSalida(dates);
+                    // LLamada al nuevo Controlador que abstrae PEPS y BD
+                    const ImportInventoryController = await import('../api/InventoryController');
+                    const InventoryController = ImportInventoryController.InventoryController;
+
+                    const result = await InventoryController.registerOutflow(dates, Number(cantidad));
+
                     handleClear();
                     window.location.hash = 'salidas';
-                    if (cantidad <= saldo) {
-                        // console.log(listItems);
-                        var restante = cantidad
-                        var fechaNumber = Date.now();
-                        listItems.forEach((item) => {
-                            // console.log(item)
-                            fechaNumber += 1;
-                            if (restante > 0) {
-                                // console.log('se entra con' + restante);
-                                if (item.Saldo >= restante) {
-                                    const saldo = item.Saldo - restante;
-                                    // console.log(item)
-                                    // console.log(`${fechaNumber} ---- boleta con ${item.Saldo}-- se resta ${restante} ---- saldo ${saldo}`);
-                                    apiObject.createKardexSalida(dates, fechaNumber, restante, item.Costo_Unitario_Neto);
-                                    apiObject.updateSaldo(item.id, saldo);
-                                    restante = 0;
-                                } else {
-                                    if (item.Saldo !== 0) {
-                                        const saldo = 0;
-                                        restante = restante - item.Saldo;
-                                        // console.log(item)
-                                        // console.log(`${fechaNumber} ---- boleta con ${item.Saldo}-- se resta ${item.Saldo} ---- saldo ${saldo}`);
-                                        apiObject.createKardexSalida(dates, fechaNumber, item.Saldo, item.Costo_Unitario_Neto);
-                                        apiObject.updateSaldo(item.id, saldo);
-                                    }
-                                }
-                            }
-                        })
-                    } else {
-                        alert("No se tiene esa Cantidad en Stock")
+
+                    if (result.status === 'PENDING') {
+                        alert(`Stock insuficiente. Se registró la salida de ${result.totalQuantityProcessed} unidades y quedaron ${result.remainingQuantityToProcess} en estado Pendiente (Backorder).`);
+                    } else if (result.status === 'COMPLETED') {
+                        alert('Salida registrada con éxito');
                     }
-                } catch (error) {
-                    console.log(error);
+
+                } catch (error: any) {
+                    console.error("Error al procesar salida PEPS: ", error);
+                    alert("Error: " + error.message);
                 }
             }
         }
@@ -194,7 +178,7 @@ const KardexSalida = () => {
                             Item Seleccionado
                         </h5>
                         <h6>Codigo: {optionInsumo.Codigo}</h6>
-                        <h6>Medicamento: {optionInsumo.Medicamento}</h6>
+                        <h6>Nombre: {optionInsumo.Nombre}</h6>
                         <h6>Unidad de Medida: {optionInsumo.UnidadMedida}</h6>
                         <h5>Saldo {saldo}</h5>
                     </div>

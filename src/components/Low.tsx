@@ -1,12 +1,13 @@
 import React from 'react'
 import { Modal, Table } from 'react-bootstrap'
 import impresora from '../assets/images/impresora.png'
+// @ts-ignore
 import { Caducidad } from '../tools/pdf/Caducidad';
 
-const Low = ({ show, handleClose, mincad }) => {
+const Low = ({ show, handleClose, mincad }: any) => {
 
-    const items = [];
-    mincad.forEach((item, index) => {
+    const items: any[] = [];
+    mincad.forEach((item: any, index: number) => {
         items.push([index, item.Codigo, item.Saldo, item.Costo_Unitario_Neto, (item.Saldo * item.Costo_Unitario_Neto).toFixed(2), item.Caducidad]);
     })
 
@@ -33,7 +34,7 @@ const Low = ({ show, handleClose, mincad }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {mincad?.map((item, index) => (
+                        {mincad?.map((item: any, index: number) => (
                             <tr key={index}>
                                 <td>{index}</td>
                                 <td>{item.Codigo}</td>

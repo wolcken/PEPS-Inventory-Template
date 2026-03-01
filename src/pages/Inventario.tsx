@@ -3,6 +3,7 @@ import { Table } from 'react-bootstrap'
 import { ListInventory } from '../utils/ListInventory';
 import Scarce from '../components/Scarce';
 import impresora from '../assets/images/impresora.png';
+// @ts-ignore
 import { Inventory } from '../tools/pdf/Inventory';
 
 const Inventario = () => {
@@ -10,16 +11,16 @@ const Inventario = () => {
     const [show, setShow] = useState(false);
 
     const inventory = ListInventory();
-    const items = [];
+    const items: any[] = [];
 
     const style3 = {
         background: '#5CDDD0'
     }
 
-    const low = [];
+    const low: any[] = [];
     const [bandera, setBandera] = useState(true);
 
-    inventory.forEach((item) => {
+    inventory.forEach((item: any) => {
         if (item.saldo <= 50) {
             low.push(item);
         }
@@ -40,8 +41,8 @@ const Inventario = () => {
         openModal();
     });
 
-    inventory.forEach((item, index) => {
-        items.push([index, item.codigo, item.medicamento, item.saldo, item.costo, (item.saldo * item.costo).toFixed(2)])
+    inventory.forEach((item: any, index: number) => {
+        items.push([index, item.codigo, item.medicamento || item.nombre, item.saldo, item.costo, (item.saldo * item.costo).toFixed(2)])
     })
 
     const handlePDF = () => {
@@ -64,11 +65,11 @@ const Inventario = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {inventory.map((item, index) => (
+                        {inventory.map((item: any, index: number) => (
                             <tr key={index}>
                                 <td>{index}</td>
                                 <td>{item.codigo}</td>
-                                <td>{item.medicamento}</td>
+                                <td>{item.medicamento || item.nombre}</td>
                                 <td style={{ color: (item.saldo > 50 ? 'green' : 'red') }}>{item.saldo}</td>
                                 <td>{item.costo}</td>
                                 <td>{(item.saldo * item.costo).toFixed(2)}</td>

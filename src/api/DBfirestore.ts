@@ -1,11 +1,11 @@
 import { collection, deleteDoc, doc, getDocs, getFirestore, onSnapshot, orderBy, query, setDoc, updateDoc, where } from 'firebase/firestore';
-import { app } from "../firebase/Credenciales";
+import { app } from "../firebase";
 import { useEffect, useState } from 'react';
 
 const db = getFirestore(app);
 
 // Verifica si el código ya existe en la base de datos
-const checkInsumoExists = async (codigo) => {
+const checkInsumoExists = async (codigo: string) => {
     const insumoRef = collection(db, 'Insumos');
     const q = query(insumoRef, where("Codigo", "==", codigo));
     const querySnapshot = await getDocs(q);
@@ -13,8 +13,8 @@ const checkInsumoExists = async (codigo) => {
     return !querySnapshot.empty; // Devuelve true si ya existe, false si no
 };
 
-// Create Insumo
-const createInsumo = async (date) => {
+// Create Insumo (Product)
+const createInsumo = async (date: any) => {
     const insumoRef = collection(db, 'Insumos');
 
     try {
@@ -29,7 +29,7 @@ const createInsumo = async (date) => {
 
         await setDoc(doc(insumoRef), {
             Codigo: formattedCodigo, // Almacenamos el código transformado
-            Medicamento: String(date.Medicamento),
+            Nombre: String(date.Nombre), // REFACTOR: Using Nombre instead of Medicamento
             Descripcion: String(date.Descripcion),
             UnidadMedida: String(date.UnidadMedida)
         });
@@ -42,12 +42,12 @@ const createInsumo = async (date) => {
 
 // Read Insumos
 const useInsumos = () => {
-    const [insumos, setInsumos] = useState([]);
+    const [insumos, setInsumos] = useState<any[]>([]);
     const getInsumo = async () => {
         try {
             const q = collection(db, 'Insumos')
             onSnapshot(q, (querySnapshot) => {
-                const docs = [];
+                const docs: any[] = [];
                 querySnapshot.forEach((doc) => {
                     docs.push({ ...doc.data(), id: doc.id })
                 })
@@ -65,7 +65,7 @@ const useInsumos = () => {
 }
 
 //Delete Insumo
-const deleteInsumo = async (id) => {
+const deleteInsumo = async (id: string) => {
     try {
         await deleteDoc(doc(db, 'Insumos', id))
         alert('Eliminado con exito')
@@ -75,7 +75,7 @@ const deleteInsumo = async (id) => {
 }
 
 // Create Provider
-const createProvider = async (date) => {
+const createProvider = async (date: any) => {
     const providerRef = collection(db, 'Providers');
     try {
         await setDoc(doc(providerRef), {
@@ -91,12 +91,12 @@ const createProvider = async (date) => {
 
 // Read Provider
 const useProviders = () => {
-    const [providers, setProviders] = useState([]);
+    const [providers, setProviders] = useState<any[]>([]);
     const getProvider = async () => {
         try {
             const q = collection(db, 'Providers')
             onSnapshot(q, (querySnapshot) => {
-                const docs = [];
+                const docs: any[] = [];
                 querySnapshot.forEach((doc) => {
                     docs.push({ ...doc.data(), id: doc.id })
                 })
@@ -114,7 +114,7 @@ const useProviders = () => {
 }
 
 //Delete Provider
-const deleteProvider = async (id) => {
+const deleteProvider = async (id: string) => {
     try {
         await deleteDoc(doc(db, 'Providers', id))
         alert('Eliminado con exito')
@@ -124,7 +124,7 @@ const deleteProvider = async (id) => {
 }
 
 // Register Kardex Entrada
-const createKardexEntrada = async (date) => {
+const createKardexEntrada = async (date: any) => {
     const kardexRef = collection(db, 'KardexEntrada');
     try {
         await setDoc(doc(kardexRef), {
@@ -150,7 +150,7 @@ const createKardexEntrada = async (date) => {
 }
 
 // Deleted Register Entrada
-const deleteKardexEntrada = async (id) => {
+const deleteKardexEntrada = async (id: string) => {
     try {
         await deleteDoc(doc(db, 'KardexEntrada', id));
         alert('Entrada eliminada con éxito');
@@ -161,13 +161,13 @@ const deleteKardexEntrada = async (id) => {
 
 // Read Kardex Entrada
 const useKardexEntrada = () => {
-    const [kardexs, setKardexs] = useState([]);
+    const [kardexs, setKardexs] = useState<any[]>([]);
     const getKardex = async () => {
         try {
             const entradaRef = collection(db, 'KardexEntrada');
             const q = query(entradaRef, orderBy("FechaNumber", "asc"));
             onSnapshot(q, (querySnapshot) => {
-                const docs = [];
+                const docs: any[] = [];
                 querySnapshot.forEach((doc) => {
                     docs.push({ ...doc.data(), id: doc.id })
                 })
@@ -185,7 +185,7 @@ const useKardexEntrada = () => {
 }
 
 // Register Kardex Salida
-const createKardexSalida = async (date, fechaNumber, cantidad, costo) => {
+const createKardexSalida = async (date: any, fechaNumber: number, cantidad: number, costo: number) => {
     // console.log(fechaNumber + '=>>>' + cantidad);
     const kardexRef = collection(db, 'KardexSalida');
     try {
@@ -209,13 +209,13 @@ const createKardexSalida = async (date, fechaNumber, cantidad, costo) => {
 
 // Read Kardex Salida
 const useKardexSalida = () => {
-    const [kardexs, setKardexs] = useState([]);
+    const [kardexs, setKardexs] = useState<any[]>([]);
     const getKardex = async () => {
         try {
             const salidaRef = collection(db, 'KardexSalida');
             const q = query(salidaRef, orderBy("FechaNumber", "asc"));
             onSnapshot(q, (querySnapshot) => {
-                const docs = [];
+                const docs: any[] = [];
                 querySnapshot.forEach((doc) => {
                     docs.push({ ...doc.data(), id: doc.id })
                 })
@@ -233,11 +233,11 @@ const useKardexSalida = () => {
 }
 
 // Read Item
-const useItem = (insumo) => {
-    const [item, setItem] = useState('');
+const useItem = (insumo: string) => {
+    const [item, setItem] = useState<{ Codigo: string, Saldo: number } | ''>('');
     useEffect(() => {
         const entradaRef = collection(db, 'KardexEntrada');
-        const getInventary = async (codigo) => {
+        const getInventary = async (codigo: string) => {
             try {
                 const q = query(entradaRef, where("Codigo", "==", String(codigo)));
                 var total = 0;
@@ -252,19 +252,19 @@ const useItem = (insumo) => {
         }
         getInventary(insumo);
         // eslint-disable-next-line
-    }, []);
+    }, [insumo]);
     return item
 }
 
 // Read Lista de Entradas por Insumo Especifico
-const useListEntrada = (codigo) => {
-    const [listSaldos, setListSaldos] = useState([])
+const useListEntrada = (codigo: string) => {
+    const [listSaldos, setListSaldos] = useState<any[]>([])
     const getKardex = async () => {
         try {
             const entradaRef = collection(db, 'KardexEntrada');
             const q = query(entradaRef, where("Codigo", "==", String(codigo)), orderBy("FechaNumber", "asc"));
             const querySnapshot = await getDocs(q);
-            const saldos = [];
+            const saldos: any[] = [];
             querySnapshot.forEach((doc) => {
                 saldos.push(doc.data().Saldo);
             });
@@ -276,12 +276,12 @@ const useListEntrada = (codigo) => {
     useEffect(() => {
         getKardex();
         // eslint-disable-next-line
-    }, []);
+    }, [codigo]);
     return listSaldos
 }
 
 // Update Saldo
-const updateSaldo = async (id, saldo) => {
+const updateSaldo = async (id: string, saldo: number) => {
 
     const entradaRef = doc(db, 'KardexEntrada', id);
 

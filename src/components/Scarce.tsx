@@ -1,12 +1,13 @@
 import React from 'react'
 import { Modal, Table } from 'react-bootstrap'
 import impresora from '../assets/images/impresora.png'
+// @ts-ignore
 import { Lows } from '../tools/pdf/Lows';
 
-const Scarce = ({ show, handleClose, low }) => {
+const Scarce = ({ show, handleClose, low }: any) => {
 
-    const items = [];
-    low.forEach((item, index) => {
+    const items: any[] = [];
+    low.forEach((item: any, index: number) => {
         items.push([index, item.codigo, item.medicamento, item.saldo])
     })
 
@@ -30,7 +31,7 @@ const Scarce = ({ show, handleClose, low }) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {low?.map((item, index) => (
+                        {low?.map((item: any, index: number) => (
                             <tr key={index}>
                                 <td>{index}</td>
                                 <td>{item.codigo}</td>

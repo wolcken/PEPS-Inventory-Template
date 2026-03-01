@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { AuthContext } from '../context/AuthProvider'
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebase/Credenciales';
+import { auth } from '../firebase';
 import { Button, Col, Form, Image, Row } from 'react-bootstrap';
 import usuario from '../assets/icons/usuario.svg';
 import ojo from '../assets/icons/ojo.svg';
@@ -9,7 +9,7 @@ import ojo_cruzado from '../assets/icons/ojo-cruzado.svg';
 import '../styles/Login.css';
 import logo from '../assets/images/jazer.png';
 
-const Login = ({ onLogIn }) => {
+const Login = ({ onLogIn }: { onLogIn: () => void }) => {
 
     const { setUser } = useContext(AuthContext);
 
@@ -22,11 +22,11 @@ const Login = ({ onLogIn }) => {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    const handleChanges = (label, value) => {
+    const handleChanges = (label: string, value: string) => {
         setUserDates({ ...userDates, [label]: value });
     };
 
-    const handleKeyDown = (event) => {
+    const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         if (event.key === 'Enter') {
             handleLogin();
         }

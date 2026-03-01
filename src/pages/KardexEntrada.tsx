@@ -22,7 +22,7 @@ const KardexEntrada = () => {
         id_Insumo: '',
         Codigo: '',
         id_Provider: '',
-        FechaString: objetoAction,
+        FechaString: objetoAction.toLocaleDateString(), // converted to string format
         FechaNumber: accion,
         Caducidad: '2024-01-01',
         Nit: '',
@@ -37,20 +37,20 @@ const KardexEntrada = () => {
     const [optionInsumo, setOptionInsumo] = useState({
         id: '',
         Codigo: '',
-        Medicamento: '',
+        Nombre: '', // using abstracted property
         Descripcion: '',
         UnidadMedida: ''
     });
 
     const [optionProvider, setOptionProvider] = useState('');
 
-    const handleChanges = (name, value) => {
+    const handleChanges = (name: string, value: string | number) => {
         setDates({
             ...dates, [name]: value
         });
     };
 
-    const handleCaducidad = (value) => {
+    const handleCaducidad = (value: any) => {
         const formattedDate = dayjs(value).format('YYYY-MM-DD');
         setDates({
             ...dates,
@@ -58,33 +58,37 @@ const KardexEntrada = () => {
         })
     }
 
-    const handlePrecioUnitario = (value) => {
+    const handlePrecioUnitario = (value: string) => {
         setDates({
             ...dates,
             Precio_Unitario: Number(value),
-            Total_Operacion: value * dates.Cantidad,
-            Valor_Neto: ((value * dates.Cantidad) * 0.87),
-            Costo_Unitario_Neto: Number(((value * dates.Cantidad) * 0.87) / dates.Cantidad) > 0 ? (Number(((value * dates.Cantidad) * 0.87) / dates.Cantidad)).toFixed(2) : 0
+            // UI should no longer calculate the net cost based on magic numbers.
+            // The controller will recalculate the real net cost and total when saving to DB.
+            Cantidad: dates.Cantidad,
+            Total_Operacion: Number(value) * dates.Cantidad,
+            Valor_Neto: 0,
+            Costo_Unitario_Neto: 0
         });
     }
 
-    const handleCantidad = (value) => {
+    const handleCantidad = (value: string) => {
         setDates({
             ...dates,
             Cantidad: Number(value),
-            Total_Operacion: value * dates.Precio_Unitario,
-            Valor_Neto: ((value * dates.Precio_Unitario) * 0.87),
-            Costo_Unitario_Neto: Number(((value * dates.Precio_Unitario) * 0.87) / value) > 0 ? (Number(((value * dates.Precio_Unitario) * 0.87) / value)).toFixed(2) : 0
+            Precio_Unitario: dates.Precio_Unitario,
+            Total_Operacion: Number(value) * dates.Precio_Unitario,
+            Valor_Neto: 0,
+            Costo_Unitario_Neto: 0
         });
     }
 
-    const handleSelectInsumo = (event) => {
-        listInsumos.forEach((insumo) => {
+    const handleSelectInsumo = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        listInsumos.forEach((insumo: any) => {
             if (String(event.target.value) === String(insumo.id)) {
                 setOptionInsumo({
                     id: insumo.id,
                     Codigo: insumo.Codigo,
-                    Medicamento: insumo.Medicamento,
+                    Nombre: insumo.Nombre || insumo.Medicamento, // Migration step
                     Descripcion: insumo.Descripcion,
                     UnidadMedida: insumo.UnidadMedida
                 });
@@ -97,8 +101,8 @@ const KardexEntrada = () => {
         });
     };
 
-    const handleSelectProvider = (event) => {
-        listProviders.forEach((provider) => {
+    const handleSelectProvider = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        listProviders.forEach((provider: any) => {
             if (String(event.target.value) === String(provider.id)) {
                 setOptionProvider(provider.id);
                 setDates({ ...dates, id_Provider: provider.id });
@@ -106,20 +110,22 @@ const KardexEntrada = () => {
         });
     }
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         setValidated(true);
         if (
             dates.id_Insumo !== '' &&
             dates.id_Provider !== '' &&
-            dates.Fecha !== '' &&
+            dates.FechaString !== '' &&
             dates.Nit !== '' &&
             dates.Factura !== ''
         ) {
             const confirmacion = window.confirm("¿Estás seguro de Registrar una Entrada?");
             if (confirmacion) {
                 try {
-                    apiObject.createKardexEntrada(dates);
+                    const ImportInventoryController = await import('../api/InventoryController');
+                    const InventoryController = ImportInventoryController.InventoryController;
+                    await InventoryController.registerInflow(dates);
                     handleClear();
                     window.location.hash = 'entradas';
                 } catch (error) {
@@ -135,7 +141,8 @@ const KardexEntrada = () => {
             Codigo: '',
             id_Provider: '',
             FechaString: '',
-            FechaNumber: '',
+            FechaNumber: 0,
+            Caducidad: '',
             Nit: '',
             Factura: '',
             Precio_Unitario: 0,
@@ -163,7 +170,7 @@ const KardexEntrada = () => {
                             Item Seleccionado
                         </h5>
                         <h6>Codigo: {optionInsumo.Codigo}</h6>
-                        <h6>Medicamento: {optionInsumo.Medicamento}</h6>
+                        <h6>Nombre: {optionInsumo.Nombre}</h6>
                         <h6>Unidad de Medida: {optionInsumo.UnidadMedida}</h6>
                     </div>
                     :

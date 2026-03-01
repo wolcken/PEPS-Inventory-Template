@@ -1,70 +1,61 @@
-# Getting Started with Create React App
+# Modelo PEPS Base (React + TypeScript)
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Este proyecto es una refactorización de un sistema de inventario (anteriormente enfocado a farmacias) hacia un **Modelo Base PEPS de Inventario**, diseñado con una arquitectura limpia, modular y tipado estricto mediante TypeScript.
 
-## Available Scripts
+El objetivo de este proyecto es servir como un producto "core" (núcleo base) reutilizable y fácilmente personalizable para distintos tipos de negocios (Ferreterías, Mini-markets, Farmacias, etc.) con el menor esfuerzo posible.
 
-In the project directory, you can run:
+## Características Principales
 
-### `npm start`
+-   **Motor PEPS Aislado (`src/core`)**: La lógica matemática para calcular Primeras Entradas, Primeras Salidas (FIFO/PEPS) está encapsulada en su propio módulo testeable e independiente de la vista.
+-   **Tipado con TypeScript**: Prevención de errores en tiempo de desarrollo. Todos los modelos de dominio (Lotes, Movimientos, Productos) están estrictamente tipados.
+-   **Configuración por Inquilino (Tenant)**: Permite personalizar reglas de negocio sin tocar el código fuente mediante el archivo `src/config/tenantConfig.ts` (Ej: Cambiar el factor de impuestos o las etiquetas visuales).
+-   **Modelo de Datos Genérico**: Abstracción de términos (ej. "Medicamento" -> "Nombre") para que el inventario pueda manejar cualquier tipo de ítem.
+-   **Estado de Salidas "Pendientes"**: Capacidad de registrar salidas incluso cuando no hay stock suficiente, dejando el remanente en estado *PENDING* para ser procesado cuando ingrese nueva mercadería (Backorder).
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Arquitectura del Proyecto
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+El proyecto sigue componentes de Clean Architecture para asegurar su mantenibilidad:
 
-### `npm test`
+```
+src/
+├── api/                   # (Infrastructure) Controladores y adaptadores. Ej: InventoryController.ts, DBfirestore.ts
+├── config/                # Configuraciones de negocio (tenantConfig.ts)
+├── core/                  # (Dominio) Lógica de puro TypeScript. Cero dependencias React/Firebase.
+│   ├── models/            # Interfaces de Typescript (types.ts)
+│   ├── services/          # El Motor de Cálculo PEPS (PepsEngine.ts)
+│   └── __tests__/         # Pruebas Unitarias (Jest)
+├── components/            # Componentes reutilizables de Interfaz de Usuario (.tsx)
+├── firebase/              # Configuración y credenciales de acceso a Firebase.
+├── pages/                 # Vistas principales de Rutas (Ej: KardexEntrada.tsx, KardexSalida.tsx)
+└── utils/                 # Funciones auxiliares genéricas (.ts)
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Configuración y Personalización
 
-### `npm run build`
+Para adaptar el Modelo PEPS a un nuevo modelo de negocio, edita el archivo `src/config/tenantConfig.ts`:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+```typescript
+export const BusinessConfig = {
+    // Etiqueta para el producto en la UI (ej: "Medicamento", "Artículo", "Repuesto")
+    productLabel: 'Nombre',
+    
+    // Factor para calcular costo neto basado en impuestos locales. 
+    // Ej: 0.87 (descuenta 13% de IVA), 1.0 (Sin deducción)
+    TAX_DEDUCTION_FACTOR: 0.87,
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+    // Política para salidas que exceden el stock:
+    // 'BLOCK': Lanza error y no procesa nada.
+    // 'PENDING': Procesa lo disponible y deja el resto pendiente (Backorder).
+    outOfStockPolicy: 'PENDING',
+}
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Scripts Disponibles
 
-### `npm run eject`
+Este proyecto fue inicializado con Create React App. Se han añadido configuraciones para compilar y testear TypeScript:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+-   `npm start`: Inicia la aplicación en modo desarrollo.
+-   `npm test`: Ejecuta la suite de pruebas unitarias (Jest) para el Motor PEPS.
+-   `npm run build`: Compila la aplicación optimizada para producción.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*(Nota: los tipos de React e importaciones de JSX se resuelven bajo el config `react-jsx` de `tsconfig.json`)*

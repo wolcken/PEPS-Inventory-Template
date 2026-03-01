@@ -3,15 +3,15 @@ import { Table } from 'react-bootstrap'
 import apiObject from '../api/DBfirestore'
 import basura from '../assets/icons/basura.svg'
 
-const InsumoList = () => {
+const ProveedoresList = () => {
 
-    const listInsumos = apiObject.useInsumos();
+    const listProviders = apiObject.useProviders();
 
-    const handleDelete = (value) => {
-        const confirmacion = window.confirm("¿Estás seguro de Eliminar este Insumo?");
+    const handleDelete = (value: string) => {
+        const confirmacion = window.confirm("¿Estás seguro de Eliminar este Proveedor?");
         if (confirmacion) {
             try {
-                apiObject.deleteInsumo(value);
+                apiObject.deleteProvider(value);
             } catch (error) {
                 console.log(error);
             }
@@ -24,21 +24,19 @@ const InsumoList = () => {
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Codigo</th>
-                        <th>Medicamento</th>
-                        <th>Descripcion</th>
-                        <th>Unidad Medida</th>
+                        <th>Empresa</th>
+                        <th>Celular</th>
+                        <th>Direccion</th>
                         <th>Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {listInsumos?.map((insumo, index) => (
+                    {listProviders?.map((insumo, index) => (
                         <tr key={insumo.id}>
                             <td>{index}</td>
-                            <td>{insumo.Codigo}</td>
-                            <td>{insumo.Medicamento}</td>
-                            <td>{insumo.Descripcion}</td>
-                            <td>{insumo.UnidadMedida}</td>
+                            <td>{insumo.Empresa}</td>
+                            <td>{insumo.Celular}</td>
+                            <td>{insumo.Direccion}</td>
                             <td>
                                 <div>
                                     <img
@@ -58,4 +56,4 @@ const InsumoList = () => {
     )
 }
 
-export default InsumoList
+export default ProveedoresList

@@ -1,20 +1,28 @@
 import apiObject from "../api/DBfirestore";
 import { ListInsumos } from "./ListInsumos";
 
-export function ListInventory() {
-    const inventory = [];
+export interface InventoryItem {
+    id: string;
+    codigo: string;
+    nombre: string;
+    saldo: number;
+    costo: number;
+}
+
+export function ListInventory(): InventoryItem[] {
+    const inventory: InventoryItem[] = [];
 
     const insumos = ListInsumos();
     const entradas = apiObject.useKardexEntrada();
 
-    insumos.forEach((insumo) => {
+    insumos.forEach((insumo: any) => {
         var id = insumo.id;
         var codigo = insumo.codigo?.toUpperCase().trim() || 'SIN CÓDIGO';
-        var medicamento = insumo.medicamento;
+        var nombre = insumo.nombre || insumo.medicamento; // Fallback
         var saldo = 0;
         var costo = 0;
 
-        entradas.forEach((entrada) => {
+        entradas.forEach((entrada: any) => {
             // Normalizar código antes de comparar
             if (String(insumo.codigo).toUpperCase().trim() === String(entrada.Codigo).toUpperCase().trim()) {
                 codigo = entrada.Codigo;  // Se asigna el código correcto
@@ -23,7 +31,7 @@ export function ListInventory() {
             }
         });
 
-        inventory.push({ id, codigo, medicamento, saldo, costo });
+        inventory.push({ id, codigo, nombre, saldo, costo });
     });
 
     return inventory;

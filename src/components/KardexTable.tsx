@@ -1,14 +1,15 @@
 import React from 'react'
 import { Table } from 'react-bootstrap'
 import impresora from '../assets/images/impresora.png'
+// @ts-ignore
 import { Kardex } from '../tools/pdf/Kardex';
 
-const KardexTable = ({ listMov, codigo, medicamento }) => {
+const KardexTable = ({ listMov, codigo, medicamento }: any) => {
 
     var listMovimientos = listMov;
-    const items = [];
+    const items: any[] = [];
 
-    function ordenarPorFechaNumber(a, b) {
+    function ordenarPorFechaNumber(a: any, b: any) {
         return a.FechaNumber - b.FechaNumber;
     }
 
@@ -35,7 +36,7 @@ const KardexTable = ({ listMov, codigo, medicamento }) => {
     var saldo1 = 0;
     var saldo2 = 0;
 
-    listMovimientos?.forEach((item) => {
+    listMovimientos?.forEach((item: any) => {
         if (item.Movimiento === 'Entrada') {
             saldo1 += item.CantidadE;
             saldo2 += (item.Costo_Unitario_Neto * item.CantidadE);
@@ -75,7 +76,7 @@ const KardexTable = ({ listMov, codigo, medicamento }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {listMovimientos?.map((item, index) => {
+                    {listMovimientos?.map((item: any, index: number) => {
                         var fecha = String(item.FechaString).slice(4, 25);
                         if (item.Movimiento === 'Entrada') {
                             saldoUnidades += item.CantidadE;

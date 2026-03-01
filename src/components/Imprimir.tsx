@@ -1,8 +1,9 @@
 import React from 'react'
 import impresora from '../assets/images/impresora.png'
+// @ts-ignore
 import { Movimientos } from '../tools/pdf/Movimientos'
 
-const Imprimir = ({ items, title }) => {
+const Imprimir = ({ items, title }: any) => {
 
     const handlePDF = () => {
         Movimientos(items, title)

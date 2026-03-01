@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from 'react-bootstrap'
+// @ts-ignore
 import RegisterInsumos from '../tools/RegisterInsumos';
 import InsumoList from '../components/InsumoList';
 
