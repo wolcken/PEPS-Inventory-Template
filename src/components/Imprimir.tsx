@@ -11,13 +11,7 @@ const Imprimir = ({ items, title }: any) => {
 
     return (
         <div
-            style={{
-                position: 'absolute',
-                top: 65,
-                right: 20,
-                cursor: 'pointer',
-                color: 'var(--text-secondary)'
-            }}
+            className="absolute top-[65px] right-[20px] cursor-pointer text-text-secondary hover:text-primary transition-colors focus:outline-none"
             onClick={handlePDF}
             title="Imprimir"
         >

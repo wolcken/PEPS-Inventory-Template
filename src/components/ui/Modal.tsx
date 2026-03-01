@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import './Modal.css';
 
 interface ModalProps {
     show: boolean;
@@ -34,26 +33,58 @@ export const Modal: React.FC<ModalProps> = ({
 
     if (!show) return null;
 
+    const sizeClasses = {
+        sm: 'max-w-sm',
+        md: 'max-w-md',
+        lg: 'max-w-lg',
+        xl: 'max-w-xl'
+    };
+
+    const dialogClass = sizeClasses[size] || sizeClasses.md;
+
     return (
-        <div className="modal-backdrop" onClick={onHide}>
+        <div
+            className="fixed inset-0 z-[1050] flex items-center justify-center overflow-x-hidden overflow-y-auto outline-none focus:outline-none"
+            onClick={onHide}
+        >
+            {/* Backdrop */}
+            <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" aria-hidden="true"></div>
+
+            {/* Modal Dialog */}
             <div
-                className={`modal-dialog modal-${size} ${centered ? 'modal-dialog-centered' : ''}`}
-                onClick={(e) => e.stopPropagation()} // Prevent click from closing when clicking inside
+                className={`relative w-full ${dialogClass} mx-auto my-6 z-[1060] ${centered ? 'flex items-center min-h-[calc(100%-3rem)]' : ''}`}
+                onClick={(e) => e.stopPropagation()}
             >
-                <div className="modal-content">
+                {/* Modal Content */}
+                <div className="relative flex w-full flex-col bg-surface border border-border shadow-lg rounded-lg outline-none focus:outline-none">
+
+                    {/* Header */}
                     {title && (
-                        <div className="modal-header">
-                            <h5 className="modal-title">{title}</h5>
-                            <button type="button" className="btn-close" onClick={onHide} aria-label="Close">
-                                &times;
+                        <div className="flex items-center justify-between p-4 border-b border-border rounded-t-lg">
+                            <h5 className="text-lg font-semibold text-text-primary m-0">
+                                {title}
+                            </h5>
+                            <button
+                                type="button"
+                                className="box-content w-4 h-4 p-1 text-text-secondary hover:text-text-primary border-none rounded-none opacity-50 hover:opacity-100 focus:opacity-100 focus:outline-none transparent"
+                                onClick={onHide}
+                                aria-label="Close"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor">
+                                    <path d="M.293.293a1 1 0 011.414 0L8 6.586 14.293.293a1 1 0 111.414 1.414L9.414 8l6.293 6.293a1 1 0 01-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 01-1.414-1.414L6.586 8 .293 1.707a1 1 0 010-1.414z" />
+                                </svg>
                             </button>
                         </div>
                     )}
-                    <div className="modal-body">
+
+                    {/* Body */}
+                    <div className="relative flex-auto p-4 text-text-secondary">
                         {children}
                     </div>
+
+                    {/* Footer */}
                     {footer && (
-                        <div className="modal-footer">
+                        <div className="flex items-center justify-end p-4 border-t border-border rounded-b-lg gap-2">
                             {footer}
                         </div>
                     )}

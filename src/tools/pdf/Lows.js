@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
-import logo from '../../assets/images/jazer.png'
+import 'jspdf-autotable'
 
 export function Lows(items) {
 
@@ -9,7 +9,8 @@ export function Lows(items) {
     const doc = new jsPDF();
 
     //Encabezado del Documento
-    doc.addImage(logo, 'png', 10, 10, 50, 10);
+    doc.setFontSize(16);
+    doc.text("SISTEMA PEPS", 10, 15);
     doc.setFontSize(8);
     doc.text(`${date}`, 130, 15);
     doc.setFontSize(14);

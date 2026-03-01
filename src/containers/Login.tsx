@@ -7,8 +7,6 @@ import { Input } from '../components/ui/Input';
 import { Card, CardBody } from '../components/ui/Card';
 import { useToast } from '../context/ToastContext';
 import { UserIcon, EyeIcon, EyeOffIcon, PackageIcon } from '../components/ui/Icons';
-import '../styles/Login.css';
-
 const Login = ({ onLogIn }: { onLogIn: () => void }) => {
     const { setUser } = useContext(AuthContext);
     const { addToast } = useToast();
@@ -51,18 +49,18 @@ const Login = ({ onLogIn }: { onLogIn: () => void }) => {
     };
 
     return (
-        <div className="login-container d-flex align-items-center justify-content-center" style={{ minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
-            <Card className="login-card" style={{ maxWidth: '400px', width: '100%', padding: '1.5rem', border: 'none', boxShadow: 'var(--shadow-lg)' }}>
-                <CardBody className="d-flex flex-column align-items-center">
-                    <div className="mb-4 text-center">
-                        <div className="d-inline-flex justify-content-center align-items-center mb-3" style={{ background: 'var(--surface-hover)', width: '80px', height: '80px', borderRadius: '50%' }}>
+        <div className="flex min-h-screen items-center justify-center bg-bg-color p-4">
+            <Card className="w-full max-w-md border-none shadow-lg">
+                <CardBody className="flex flex-col items-center">
+                    <div className="mb-6 text-center">
+                        <div className="inline-flex justify-center items-center mb-4 bg-surface-hover w-20 h-20 rounded-full">
                             <PackageIcon size={48} color="var(--primary-color)" />
                         </div>
-                        <h2 className="title_login m-0" style={{ fontSize: '1.75rem', fontWeight: '700', color: 'var(--text-primary)' }}>Modelo Base</h2>
-                        <p className="text-muted mt-1" style={{ fontSize: '0.875rem' }}>PEPS Engine</p>
+                        <h2 className="m-0 text-3xl font-bold text-text-primary">Modelo Base</h2>
+                        <p className="text-text-muted mt-1 text-sm">PEPS Engine</p>
                     </div>
 
-                    <div className="w-100 mb-3">
+                    <div className="w-full mb-4">
                         <Input
                             type="email"
                             placeholder="Usuario (Correo electrónico)"
@@ -74,7 +72,7 @@ const Login = ({ onLogIn }: { onLogIn: () => void }) => {
                         />
                     </div>
 
-                    <div className="w-100 mb-4 position-relative">
+                    <div className="w-full mb-6 relative">
                         <Input
                             type={!showPassword ? 'password' : 'text'}
                             placeholder="Contraseña"
@@ -82,7 +80,7 @@ const Login = ({ onLogIn }: { onLogIn: () => void }) => {
                             onChange={(event) => handleChanges('password', event.target.value)}
                             onKeyDown={handleKeyDown}
                             icon={
-                                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex' }}>
+                                <button type="button" onClick={() => setShowPassword(!showPassword)} className="bg-transparent border-none p-0 cursor-pointer flex text-text-muted hover:text-text-primary transition-colors focus:outline-none focus:text-primary">
                                     {!showPassword ? <EyeOffIcon /> : <EyeIcon />}
                                 </button>
                             }

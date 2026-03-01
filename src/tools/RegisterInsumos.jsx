@@ -13,7 +13,7 @@ const RegisterInsumos = ({ show, handleClose }) => {
 
     const [date, setDate] = useState({
         Codigo: '',
-        Medicamento: '',
+        Nombre: '',
         Descripcion: '',
         UnidadMedida: ''
     });
@@ -40,7 +40,7 @@ const RegisterInsumos = ({ show, handleClose }) => {
         event.preventDefault();
         setValidated(true);
 
-        if (!date.Codigo || !date.Medicamento || !date.Descripcion || !date.UnidadMedida) {
+        if (!date.Codigo || !date.Nombre || !date.Descripcion || !date.UnidadMedida) {
             addToast({ message: 'Todos los campos son obligatorios.', variant: 'warning' });
             return;
         }
@@ -61,7 +61,7 @@ const RegisterInsumos = ({ show, handleClose }) => {
     const handleClear = () => {
         setDate({
             Codigo: '',
-            Medicamento: '',
+            Nombre: '',
             Descripcion: '',
             UnidadMedida: ''
         });
@@ -74,11 +74,14 @@ const RegisterInsumos = ({ show, handleClose }) => {
     }
 
     const modalFooter = (
-        <div className="d-flex justify-content-between w-100 mt-2">
+        <div className="flex justify-between w-full mt-2">
             <Button variant='outline-primary' onClick={handleClear} disabled={isLoading}>Limpiar</Button>
-            <Button variant='primary' onClick={handleSave} disabled={isLoading}>
+            <Button variant='primary' onClick={handleSave} disabled={isLoading} className="flex items-center justify-center min-w-[100px]">
                 {isLoading ? (
-                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                    <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
                 ) : 'Guardar'}
             </Button>
         </div>
@@ -94,7 +97,7 @@ const RegisterInsumos = ({ show, handleClose }) => {
             footer={modalFooter}
         >
             <form onSubmit={handleSave} noValidate>
-                <div className="mb-3">
+                <div className="mb-4">
                     <Input
                         label="Codigo"
                         required
@@ -105,18 +108,18 @@ const RegisterInsumos = ({ show, handleClose }) => {
                         error={validated && !date.Codigo ? "Introduce un Nuevo Codigo." : ""}
                     />
                 </div>
-                <div className="mb-3">
+                <div className="mb-4">
                     <Input
-                        label="Nombre (Medicamento/Insumo)"
+                        label="Nombre del Insumo"
                         required
                         type="text"
-                        placeholder="Nombre del Medicamento / Insumo"
-                        value={date.Medicamento}
-                        onChange={(e) => handleChanges('Medicamento', e.target.value)}
-                        error={validated && !date.Medicamento ? "Introduzca el Nombre del Medicamento." : ""}
+                        placeholder="Nombre del Insumo"
+                        value={date.Nombre}
+                        onChange={(e) => handleChanges('Nombre', e.target.value)}
+                        error={validated && !date.Nombre ? "Introduzca el Nombre del Insumo." : ""}
                     />
                 </div>
-                <div className="mb-3">
+                <div className="mb-4">
                     <Input
                         label="Descripcion"
                         required
@@ -127,7 +130,7 @@ const RegisterInsumos = ({ show, handleClose }) => {
                         error={validated && !date.Descripcion ? "Introduce la Descripcion." : ""}
                     />
                 </div>
-                <div className="mb-3">
+                <div className="mb-4">
                     <Input
                         label="Unidad de Medida"
                         required

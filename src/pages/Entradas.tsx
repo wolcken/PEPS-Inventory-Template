@@ -62,6 +62,7 @@ const Entradas = () => {
     const items = sortedEntries.map((item, index) => [
         index + 1,
         item.Codigo,
+        item.Nombre,
         item.FechaString,
         item.Cantidad,
         item.Precio_Unitario,
@@ -92,36 +93,36 @@ const Entradas = () => {
     };
 
     return (
-        <div className="container mt-4">
-            <div className="d-flex justify-content-between align-items-center mb-4">
-                <h3 className="m-0">Entradas</h3>
+        <div className="container mx-auto mt-6 px-4">
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="m-0 text-2xl font-semibold text-text-primary">Entradas</h3>
             </div>
 
-            <div className="table-responsive card p-0 shadow-sm border-0">
-                <table className="table table-striped table-hover m-0">
-                    <thead className="table-light">
+            <div className="overflow-x-auto bg-surface rounded-lg shadow-sm border border-border">
+                <table className="w-full text-left text-sm whitespace-nowrap">
+                    <thead className="bg-surface-hover text-text-secondary border-b border-border">
                         <tr>
-                            <th className="px-3">#</th>
-                            <th>Insumo</th>
-                            <th>Fecha</th>
-                            <th>Cantidad</th>
-                            <th>Precio Unitario</th>
-                            <th>Costo Unitario Neto</th>
-                            <th className="text-center">Acciones</th>
+                            <th className="px-6 py-3 font-semibold">#</th>
+                            <th className="px-6 py-3 font-semibold">Insumo</th>
+                            <th className="px-6 py-3 font-semibold">Fecha</th>
+                            <th className="px-6 py-3 font-semibold">Cantidad</th>
+                            <th className="px-6 py-3 font-semibold">Precio Unitario</th>
+                            <th className="px-6 py-3 font-semibold">Costo Unitario Neto</th>
+                            <th className="px-6 py-3 font-semibold text-center">Acciones</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody className="divide-y divide-border">
                         {currentItems.length > 0 ? (
                             currentItems.map((kardex, index) => (
-                                <tr key={kardex.id} className="align-middle">
-                                    <td className="px-3 fw-medium text-muted">{indexOfFirstItem + index + 1}</td>
-                                    <td className="fw-semibold text-primary">{kardex.Codigo}</td>
-                                    <td>{kardex.FechaString}</td>
-                                    <td>{kardex.Cantidad}</td>
-                                    <td>{kardex.Precio_Unitario}</td>
-                                    <td>{kardex.Costo_Unitario_Neto}</td>
-                                    <td className="text-center">
-                                        <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => confirmDelete(kardex.id)} title="Eliminar Entrada">
+                                <tr key={kardex.id} className="hover:bg-surface-hover transition-colors">
+                                    <td className="px-6 py-4 font-medium text-text-muted">{indexOfFirstItem + index + 1}</td>
+                                    <td className="px-6 py-4 font-semibold text-primary">{kardex.Codigo}</td>
+                                    <td className="px-6 py-4 text-text-primary">{kardex.FechaString}</td>
+                                    <td className="px-6 py-4 text-text-primary">{kardex.Cantidad}</td>
+                                    <td className="px-6 py-4 text-text-primary">{kardex.Precio_Unitario}</td>
+                                    <td className="px-6 py-4 text-text-primary">{kardex.Costo_Unitario_Neto}</td>
+                                    <td className="px-6 py-4 text-center">
+                                        <button className="bg-transparent border-none text-danger p-2 rounded-full hover:bg-danger/10 transition-colors" onClick={() => confirmDelete(kardex.id)} title="Eliminar Entrada">
                                             <TrashIcon size={20} />
                                         </button>
                                     </td>
@@ -129,7 +130,7 @@ const Entradas = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={7} className="text-center py-4 text-muted">
+                                <td colSpan={7} className="px-6 py-8 text-center text-text-muted">
                                     No hay registros disponibles.
                                 </td>
                             </tr>
@@ -138,7 +139,7 @@ const Entradas = () => {
                 </table>
             </div>
 
-            <div className="d-flex justify-content-center mt-4 gap-2">
+            <div className="flex justify-center mt-6 gap-2">
                 {Array.from({ length: totalPages }, (_, index) => (
                     <Button
                         key={index}
@@ -151,15 +152,15 @@ const Entradas = () => {
             </div>
 
             <Low show={show} handleClose={handleClose} mincad={sortedLowStock} />
-            <div className="mt-4">
+            <div className="mt-6">
                 <Imprimir items={items} title="Entradas" />
             </div>
 
             <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} title="Eliminar Entrada" centered>
-                <p className="mb-0 text-center" style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+                <p className="mb-0 text-center text-lg text-text-secondary">
                     ¿Estás seguro que deseas eliminar esta entrada permanentemente?
                 </p>
-                <div className="d-flex justify-content-center gap-3 mt-4 pt-2">
+                <div className="flex justify-center gap-4 mt-6 pt-2">
                     <Button variant="outline" onClick={() => setShowDeleteModal(false)}>
                         Cancelar
                     </Button>

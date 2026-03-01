@@ -34,38 +34,38 @@ const Salidas = () => {
   ]);
 
   return (
-    <div className="container mt-4">
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h3 className="m-0">Salidas</h3>
+    <div className="container mx-auto mt-6 px-4">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="m-0 text-2xl font-semibold text-text-primary">Salidas</h3>
       </div>
 
-      <div className="table-responsive card p-0 shadow-sm border-0">
-        <table className="table table-striped table-hover m-0">
-          <thead className="table-light">
+      <div className="overflow-x-auto bg-surface rounded-lg shadow-sm border border-border">
+        <table className="w-full text-left text-sm whitespace-nowrap">
+          <thead className="bg-surface-hover text-text-secondary border-b border-border">
             <tr>
-              <th className="px-3">#</th>
-              <th>Código</th>
-              <th>Fecha</th>
-              <th>Factura</th>
-              <th>Cantidad</th>
-              <th>C/U Neto</th>
+              <th className="px-6 py-3 font-semibold">#</th>
+              <th className="px-6 py-3 font-semibold">Código</th>
+              <th className="px-6 py-3 font-semibold">Fecha</th>
+              <th className="px-6 py-3 font-semibold">Factura</th>
+              <th className="px-6 py-3 font-semibold">Cantidad</th>
+              <th className="px-6 py-3 font-semibold">C/U Neto</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-border">
             {currentItems.length > 0 ? (
               currentItems.map((kardex, index) => (
-                <tr key={index} className="align-middle">
-                  <td className="px-3 fw-medium text-muted">{indexOfFirstItem + index + 1}</td>
-                  <td className="fw-semibold text-primary">{kardex.Codigo}</td>
-                  <td>{kardex.FechaString}</td>
-                  <td>{kardex.Factura}</td>
-                  <td>{kardex.Cantidad}</td>
-                  <td>{kardex.Costo_Unitario_Neto}</td>
+                <tr key={index} className="hover:bg-surface-hover transition-colors">
+                  <td className="px-6 py-4 font-medium text-text-muted">{indexOfFirstItem + index + 1}</td>
+                  <td className="px-6 py-4 font-semibold text-primary">{kardex.Codigo}</td>
+                  <td className="px-6 py-4 text-text-primary">{kardex.FechaString}</td>
+                  <td className="px-6 py-4 text-text-primary">{kardex.Factura}</td>
+                  <td className="px-6 py-4 text-text-primary">{kardex.Cantidad}</td>
+                  <td className="px-6 py-4 text-text-primary">{kardex.Costo_Unitario_Neto}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="text-center py-4 text-muted">
+                <td colSpan={6} className="px-6 py-8 text-center text-text-muted">
                   No hay registros disponibles.
                 </td>
               </tr>
@@ -75,7 +75,7 @@ const Salidas = () => {
       </div>
 
       {/* Controles de paginación */}
-      <div className="d-flex justify-content-center mt-4 gap-2">
+      <div className="flex justify-center mt-6 gap-2">
         {Array.from({ length: totalPages }, (_, index) => (
           <Button
             key={index}
@@ -88,7 +88,7 @@ const Salidas = () => {
       </div>
 
       {/* Botón para imprimir */}
-      <div className="mt-4">
+      <div className="mt-6">
         <Imprimir items={items} title='Salidas' />
       </div>
     </div>

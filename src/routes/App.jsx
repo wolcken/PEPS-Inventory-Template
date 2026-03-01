@@ -1,6 +1,5 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import Layout from '../containers/Layout';
-import '../styles/App.css';
 import Entradas from '../pages/Entradas';
 import Salidas from '../pages/Salidas';
 import Insumos from '../pages/Insumos';
@@ -17,7 +16,7 @@ import NotFound from '../pages/NotFound';
 
 function App() {
     return (
-        <div className="App">
+        <div>
             <HashRouter>
                 <AuthProvider>
                     <ToastProvider>

@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Input } from './Input';
-import './SearchableSelect.css';
 
 interface Option {
     value: string;
@@ -61,7 +60,7 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
     };
 
     return (
-        <div className={`searchable-select-container ${className}`} ref={wrapperRef}>
+        <div className={`relative w-full ${className}`} ref={wrapperRef}>
             <div onClick={() => setIsOpen(true)}>
                 <Input
                     label={label}
@@ -79,19 +78,22 @@ export const SearchableSelect: React.FC<SearchableSelectProps> = ({
             </div>
 
             {isOpen && (
-                <ul className="searchable-options-list shadow-sm">
+                <ul className="absolute z-50 w-full mt-1 bg-surface border border-border rounded-md shadow-lg max-h-60 overflow-auto focus:outline-none py-1">
                     {filteredOptions.length > 0 ? (
                         filteredOptions.map((option) => (
                             <li
                                 key={option.value}
-                                className={`searchable-option ${option.value === value ? 'selected' : ''}`}
+                                className={`cursor-pointer select-none relative py-2 px-3 text-text-primary hover:bg-surface-hover hover:text-primary transition-colors ${option.value === value ? 'bg-primary/5 text-primary font-medium' : ''
+                                    }`}
                                 onClick={() => handleSelect(option.value)}
                             >
                                 {option.label}
                             </li>
                         ))
                     ) : (
-                        <li className="searchable-option-empty">No se encontraron resultados</li>
+                        <li className="relative cursor-default select-none py-2 px-3 text-text-muted">
+                            No se encontraron resultados
+                        </li>
                     )}
                 </ul>
             )}

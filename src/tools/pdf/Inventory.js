@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
-import logo from '../../assets/images/jazer.png'
+import 'jspdf-autotable'
 
 export function Inventory(items) {
 
@@ -9,7 +9,8 @@ export function Inventory(items) {
     const doc = new jsPDF();
 
     //Encabezado del Documento
-    doc.addImage(logo, 'png', 10, 10, 50, 10);
+    doc.setFontSize(16);
+    doc.text("SISTEMA PEPS", 10, 15);
     doc.setFontSize(8);
     doc.text(`${date}`, 130, 15);
     doc.setFontSize(14);
@@ -17,7 +18,7 @@ export function Inventory(items) {
     doc.line(80, 35, 135, 35, 'F');
 
     //Tabla de Activos
-    const columns = ['#', 'Codigo', 'Medicamento', 'Saldo', 'Costo Unitario' , 'Valorado'];
+    const columns = ['#', 'Codigo', 'Medicamento', 'Saldo', 'Costo Unitario', 'Valorado'];
     const data = items
 
     doc.autoTable({

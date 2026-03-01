@@ -165,10 +165,10 @@ const KardexEntrada = () => {
     }
 
     return (
-        <div className="container mt-4">
-            <h3 className="mb-4">Kardex de Entrada</h3>
-            <form className='card p-4 shadow-sm bg-surface' noValidate onSubmit={handleSubmit}>
-                <h5 className="mb-3 border-bottom pb-2">Selección de Insumo</h5>
+        <div className="container mx-auto mt-6 px-4">
+            <h3 className="mb-6 text-2xl font-semibold text-text-primary">Kardex de Entrada</h3>
+            <form className='bg-surface p-6 rounded-lg shadow-sm border border-border' noValidate onSubmit={handleSubmit}>
+                <h5 className="mb-4 border-b border-border pb-2 text-lg font-medium text-text-primary">Selección de Insumo</h5>
                 <SearchableSelect
                     className='mb-4 w-100'
                     value={optionInsumo.id}
@@ -178,17 +178,17 @@ const KardexEntrada = () => {
                 />
 
                 {optionInsumo.id !== '' && (
-                    <div className="mb-4 p-3 bg-surface border rounded">
-                        <h6 className="text-secondary mb-1">Item Seleccionado</h6>
-                        <div className="font-semibold text-primary">{optionInsumo.Codigo} - {optionInsumo.Nombre}</div>
-                        <div className="text-muted small">Medida: {optionInsumo.UnidadMedida}</div>
+                    <div className="mb-6 p-4 bg-surface-hover border border-border rounded-lg">
+                        <h6 className="text-text-secondary mb-1 text-sm font-medium">Item Seleccionado</h6>
+                        <div className="font-semibold text-primary text-lg">{optionInsumo.Codigo} - {optionInsumo.Nombre}</div>
+                        <div className="text-text-muted text-sm mt-1">Medida: {optionInsumo.UnidadMedida}</div>
                     </div>
                 )}
 
-                <h5 className="mb-3 border-bottom pb-2 mt-4">Datos de Entrada</h5>
+                <h5 className="mb-4 border-b border-border pb-2 mt-8 text-lg font-medium text-text-primary">Datos de Entrada</h5>
 
-                <div className="d-flex flex-wrap gap-4 mb-3">
-                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                <div className="flex flex-wrap gap-4 mb-4">
+                    <div className="flex-1 min-w-[250px]">
                         <Input
                             label="Fecha de Registro"
                             required
@@ -200,7 +200,7 @@ const KardexEntrada = () => {
                             error={validated && !dates.FechaString ? "Elige la Fecha." : ""}
                         />
                     </div>
-                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                    <div className="flex-1 min-w-[250px]">
                         <Input
                             label="NIT del Proveedor"
                             required
@@ -213,8 +213,8 @@ const KardexEntrada = () => {
                     </div>
                 </div>
 
-                <div className="d-flex flex-wrap gap-4 mb-3">
-                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                <div className="flex flex-wrap gap-4 mb-4">
+                    <div className="flex-1 min-w-[250px]">
                         <SearchableSelect
                             label="Proveedor"
                             value={optionProvider}
@@ -223,7 +223,7 @@ const KardexEntrada = () => {
                             options={listProviders.map((p: any) => ({ value: p.id, label: p.Empresa }))}
                         />
                     </div>
-                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                    <div className="flex-1 min-w-[250px]">
                         <Input
                             label="Factura N°"
                             required
@@ -236,8 +236,8 @@ const KardexEntrada = () => {
                     </div>
                 </div>
 
-                <div className="d-flex flex-wrap gap-4 mb-3">
-                    <div className="flex-grow-1" style={{ minWidth: '200px' }}>
+                <div className="flex flex-wrap gap-4 mb-4">
+                    <div className="flex-1 min-w-[200px]">
                         <Input
                             label="Precio Unitario (Bruto)"
                             required
@@ -248,7 +248,7 @@ const KardexEntrada = () => {
                             error={validated && !dates.Precio_Unitario ? "Introduce Precio." : ""}
                         />
                     </div>
-                    <div className="flex-grow-1" style={{ minWidth: '200px' }}>
+                    <div className="flex-1 min-w-[200px]">
                         <Input
                             label="Cantidad"
                             required
@@ -259,7 +259,7 @@ const KardexEntrada = () => {
                             error={validated && !dates.Cantidad ? "Introduce Cantidad." : ""}
                         />
                     </div>
-                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                    <div className="flex-1 min-w-[250px]">
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DemoContainer components={['DatePicker']} sx={{ pt: 1 }}>
                                 <DatePicker
@@ -273,8 +273,8 @@ const KardexEntrada = () => {
                     </div>
                 </div>
 
-                <div className="d-flex flex-wrap gap-4 mb-4 p-3 bg-light rounded mt-4 border">
-                    <div className="flex-grow-1">
+                <div className="flex flex-wrap gap-4 mb-6 p-4 bg-surface-hover rounded-lg mt-6 border border-border">
+                    <div className="flex-1">
                         <Input
                             label="Total Operación (Bruto)"
                             type="text"
@@ -282,7 +282,7 @@ const KardexEntrada = () => {
                             disabled
                         />
                     </div>
-                    <div className="flex-grow-1">
+                    <div className="flex-1">
                         <Input
                             label="Valor Neto (Calculado)"
                             type="text"
@@ -290,7 +290,7 @@ const KardexEntrada = () => {
                             disabled
                         />
                     </div>
-                    <div className="flex-grow-1">
+                    <div className="flex-1">
                         <Input
                             label="Costo Unitario Neto"
                             type="text"
@@ -300,10 +300,13 @@ const KardexEntrada = () => {
                     </div>
                 </div>
 
-                <div className="mt-4 pt-3 border-top text-right">
-                    <Button type="submit" variant="primary" size="lg" disabled={isLoading}>
+                <div className="mt-8 pt-4 border-t border-border flex justify-end">
+                    <Button type="submit" variant="primary" size="lg" disabled={isLoading} className="flex items-center justify-center min-w-[200px]">
                         {isLoading ? (
-                            <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                            <svg className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
                         ) : 'Registrar Entrada al Inventario'}
                     </Button>
                 </div>

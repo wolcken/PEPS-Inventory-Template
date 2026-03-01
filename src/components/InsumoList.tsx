@@ -33,28 +33,32 @@ const InsumoList = () => {
 
     return (
         <>
-            <div className="table-responsive card mt-3 p-0 shadow-sm border-0">
-                <table className="table table-striped table-hover m-0">
-                    <thead className="table-light">
-                        <tr>
-                            <th className="px-3">#</th>
-                            <th>Codigo</th>
-                            <th>Nombre</th>
-                            <th>Descripcion</th>
-                            <th>Unidad Medida</th>
-                            <th className="text-center">Opciones</th>
+            <div className="w-full overflow-x-auto bg-surface mt-4 rounded-lg shadow-sm border border-border">
+                <table className="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr className="bg-surface-hover text-text-secondary text-xs uppercase tracking-wider border-b border-border">
+                            <th className="px-4 py-3 font-semibold">#</th>
+                            <th className="px-4 py-3 font-semibold">Codigo</th>
+                            <th className="px-4 py-3 font-semibold">Nombre</th>
+                            <th className="px-4 py-3 font-semibold">Descripcion</th>
+                            <th className="px-4 py-3 font-semibold">Unidad Medida</th>
+                            <th className="px-4 py-3 font-semibold text-center">Opciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {listInsumos?.map((insumo, index) => (
-                            <tr key={insumo.id} className="align-middle">
-                                <td className="px-3 fw-medium text-muted">{index + 1}</td>
-                                <td className="fw-semibold text-primary">{insumo.Codigo}</td>
-                                <td className="fw-semibold">{insumo.Nombre || insumo.Medicamento}</td>
-                                <td>{insumo.Descripcion}</td>
-                                <td>{insumo.UnidadMedida}</td>
-                                <td className="text-center">
-                                    <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => confirmDelete(insumo.id)} title="Eliminar Insumo">
+                            <tr key={insumo.id} className="border-b border-border hover:bg-surface-hover transition-colors">
+                                <td className="px-4 py-3 font-medium text-text-muted">{index + 1}</td>
+                                <td className="px-4 py-3 font-semibold text-primary">{insumo.Codigo}</td>
+                                <td className="px-4 py-3 font-semibold text-text-primary">{insumo.Nombre || insumo.Medicamento}</td>
+                                <td className="px-4 py-3 text-text-secondary">{insumo.Descripcion}</td>
+                                <td className="px-4 py-3 text-text-secondary">{insumo.UnidadMedida}</td>
+                                <td className="px-4 py-3 text-center">
+                                    <button
+                                        className="inline-flex items-center justify-center p-1.5 text-danger hover:bg-red-50 hover:text-red-700 rounded-md transition-colors focus:outline-none"
+                                        onClick={() => confirmDelete(insumo.id)}
+                                        title="Eliminar Insumo"
+                                    >
                                         <TrashIcon size={20} />
                                     </button>
                                 </td>
@@ -62,7 +66,7 @@ const InsumoList = () => {
                         ))}
                         {(!listInsumos || listInsumos.length === 0) && (
                             <tr>
-                                <td colSpan={6} className="text-center py-4 text-muted">
+                                <td colSpan={6} className="px-4 py-8 text-center text-text-muted">
                                     No hay insumos registrados.
                                 </td>
                             </tr>
@@ -72,10 +76,10 @@ const InsumoList = () => {
             </div>
 
             <Modal show={showModal} onHide={() => setShowModal(false)} title="Eliminar Insumo" centered>
-                <p className="mb-0 text-center" style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>
+                <p className="mb-0 text-center text-lg text-text-secondary">
                     ¿Estás seguro que deseas eliminar este insumo permanentemente?
                 </p>
-                <div className="d-flex justify-content-center gap-3 mt-4 pt-2">
+                <div className="flex justify-center gap-4 mt-6">
                     <Button variant="outline" onClick={() => setShowModal(false)}>
                         Cancelar
                     </Button>

@@ -16,8 +16,12 @@ const Scarce = ({ show, handleClose, low }: any) => {
     }
 
     const modalFooter = (
-        <div className="d-flex justify-content-end w-100">
-            <button className="btn btn-icon border-0 bg-transparent text-secondary p-1" onClick={handlePDF} title="Imprimir Reporte">
+        <div className="flex justify-end w-full">
+            <button
+                className="inline-flex items-center justify-center p-1.5 text-text-secondary hover:bg-surface-hover hover:text-text-primary rounded-md transition-colors focus:outline-none"
+                onClick={handlePDF}
+                title="Imprimir Reporte"
+            >
                 <PrintIcon size={26} />
             </button>
         </div>
@@ -28,27 +32,28 @@ const Scarce = ({ show, handleClose, low }: any) => {
             show={show}
             onHide={handleClose}
             centered
+            size="xl"
             title="Lista de Unidades Bajas"
             footer={modalFooter}
         >
-            <div className="table-responsive">
-                <table className="table table-striped table-hover table-bordered m-0">
-                    <thead className="table-light">
-                        <tr>
-                            <th className="px-3">#</th>
-                            <th>Codigo</th>
-                            <th>Nombre</th>
-                            <th>Saldo</th>
+            <div className="w-full overflow-x-auto rounded-lg shadow-[0_0_0_1px_var(--border-color)]">
+                <table className="w-full text-left border-collapse whitespace-nowrap">
+                    <thead>
+                        <tr className="bg-surface-hover text-text-secondary text-xs uppercase tracking-wider border-b border-border">
+                            <th className="px-4 py-3 font-semibold border-r border-border last:border-r-0">#</th>
+                            <th className="px-4 py-3 font-semibold border-r border-border last:border-r-0">Codigo</th>
+                            <th className="px-4 py-3 font-semibold border-r border-border last:border-r-0">Nombre</th>
+                            <th className="px-4 py-3 font-semibold align-middle">Saldo</th>
                         </tr>
                     </thead>
                     <tbody>
                         {low?.map((item: any, index: number) => (
-                            <tr key={index} className="align-middle">
-                                <td className="px-3 fw-medium text-muted">{index + 1}</td>
-                                <td className="fw-semibold text-primary">{item.codigo}</td>
-                                <td className="fw-semibold">{item.medicamento}</td>
-                                <td>
-                                    <span className="badge bg-danger">
+                            <tr key={index} className="border-b border-border hover:bg-surface-hover transition-colors">
+                                <td className="px-4 py-3 font-medium text-text-muted border-r border-border last:border-r-0">{index + 1}</td>
+                                <td className="px-4 py-3 font-semibold text-primary border-r border-border last:border-r-0">{item.codigo}</td>
+                                <td className="px-4 py-3 font-semibold text-text-primary border-r border-border last:border-r-0">{item.nombre}</td>
+                                <td className="px-4 py-3 align-middle">
+                                    <span className="inline-flex items-center rounded-full bg-danger px-2.5 py-0.5 text-xs font-semibold text-white">
                                         {item.saldo}
                                     </span>
                                 </td>
@@ -56,7 +61,7 @@ const Scarce = ({ show, handleClose, low }: any) => {
                         ))}
                         {(!low || low.length === 0) && (
                             <tr>
-                                <td colSpan={4} className="text-center py-4 text-muted">
+                                <td colSpan={4} className="px-4 py-8 text-center text-text-muted">
                                     No hay insumos con stock bajo.
                                 </td>
                             </tr>

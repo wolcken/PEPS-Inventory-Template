@@ -22,35 +22,37 @@ export const Input: React.FC<InputProps> = ({
     const inputId = id || `input-${Math.random().toString(36).substr(2, 9)}`;
 
     return (
-        <div className={`form-group ${className}`} style={style}>
-            {label && <label htmlFor={inputId} className="form-label">{label}</label>}
-            <div style={{ position: 'relative', width: fullWidth ? '100%' : 'auto' }}>
+        <div className={`flex flex-col mb-4 ${className}`} style={style}>
+            {label && (
+                <label htmlFor={inputId} className="mb-1 block text-sm font-medium text-text-primary">
+                    {label}
+                </label>
+            )}
+            <div className={`relative ${fullWidth ? 'w-full' : 'w-auto'}`}>
                 <input
                     id={inputId}
-                    className={`form-control ${error ? 'is-invalid' : ''}`}
-                    style={{
-                        width: '100%',
-                        paddingRight: icon && iconPosition === 'right' ? '2.5rem' : undefined,
-                        paddingLeft: icon && iconPosition === 'left' ? '2.5rem' : undefined,
-                    }}
+                    className={`
+                        block w-full rounded-md shadow-sm sm:text-sm
+                        focus:outline-none focus:ring-1 transition-colors
+                        ${error
+                            ? 'border-danger text-danger focus:ring-danger focus:border-danger bg-red-50'
+                            : 'border-border text-text-primary focus:ring-primary focus:border-primary bg-surface'}
+                        ${icon && iconPosition === 'left' ? 'pl-10' : 'pl-3'}
+                        ${icon && iconPosition === 'right' ? 'pr-10' : 'pr-3'}
+                        py-2 border
+                    `}
                     {...props}
                 />
                 {icon && (
-                    <div style={{
-                        position: 'absolute',
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        [iconPosition]: '0.75rem',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'var(--text-muted)'
-                    }}>
+                    <div className={`
+                        absolute inset-y-0 flex items-center justify-center pointer-events-none text-text-muted
+                        ${iconPosition === 'left' ? 'left-0 pl-3' : 'right-0 pr-3'}
+                    `}>
                         {icon}
                     </div>
                 )}
             </div>
-            {error && <div className="text-danger mt-1" style={{ fontSize: '0.875rem' }}>{error}</div>}
+            {error && <div className="mt-1 text-sm text-danger">{error}</div>}
         </div>
     );
 };

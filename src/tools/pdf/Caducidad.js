@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
-import logo from '../../assets/images/jazer.png';
+import 'jspdf-autotable';
 
 export function Caducidad(items) {
     const date = new Date();
@@ -9,7 +9,8 @@ export function Caducidad(items) {
     const doc = new jsPDF({ orientation: 'landscape', format: 'a4' });
 
     // Encabezado
-    doc.addImage(logo, 'png', 10, 10, 50, 10);
+    doc.setFontSize(16);
+    doc.text("SISTEMA PEPS", 10, 15);
     doc.setFontSize(8);
     doc.text(date.toLocaleString() + ' (hora de Bolivia)', 200, 15);
     doc.setFontSize(14);
