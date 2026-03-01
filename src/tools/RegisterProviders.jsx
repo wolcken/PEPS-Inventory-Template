@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Button, Form, Modal } from 'react-bootstrap'
+import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
+import { Input } from '../components/ui/Input';
 import apiObject from '../api/DBfirestore';
 
 const RegisterProviders = ({ show, handleClose }) => {
@@ -21,8 +23,7 @@ const RegisterProviders = ({ show, handleClose }) => {
     const handleSave = (event) => {
         event.preventDefault();
         setValidated(true);
-        if (date.Codigo !== ''
-            && date.Empresa !== ''
+        if (date.Empresa !== ''
             && date.Celular !== ''
             && date.Direccion !== '') {
             apiObject.createProvider(date);
@@ -44,65 +45,57 @@ const RegisterProviders = ({ show, handleClose }) => {
         handleClose();
     }
 
+    const modalFooter = (
+        <div className="d-flex justify-content-between w-100 mt-2">
+            <Button variant='outline-primary' onClick={handleClear}>Limpiar</Button>
+            <Button variant='primary' onClick={handleSave}>Guardar</Button>
+        </div>
+    );
+
     return (
         <Modal
             show={show}
             onHide={handleExit}
             size="md"
             centered
+            title="Nuevo Registro de Proveedor"
+            footer={modalFooter}
         >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Nuevo Registro
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form noValidate validated={validated}>
-                    <Form.Group controlId="validationEmpresa">
-                        <Form.Label>Empresa</Form.Label>
-                        <Form.Control
-                            required
-                            type="text"
-                            placeholder="Nombre de la Empresa"
-                            value={date.Empresa}
-                            onChange={(e) => handleChanges('Empresa', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce un Nombre de la Empresa.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group controlId="validationCelular">
-                        <Form.Label>Celular</Form.Label>
-                        <Form.Control
-                            required
-                            type="number"
-                            placeholder="Numero de Celular"
-                            value={date.Celular}
-                            onChange={(e) => handleChanges('Celular', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduzca el Numero de Celular.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group controlId="validationDireccion">
-                        <Form.Label>Direccion</Form.Label>
-                        <Form.Control
-                            required
-                            type="text"
-                            placeholder="Direccion de la Empresa"
-                            value={date.Direccion}
-                            onChange={(e) => handleChanges('Direccion', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce la Direccion.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            <Modal.Footer style={{ justifyContent: 'space-between' }}>
-                <Button variant='secondary' onClick={handleClear}>Limpiar</Button>
-                <Button variant='primary' onClick={handleSave}>Guardar</Button>
-            </Modal.Footer>
+            <form onSubmit={handleSave} noValidate>
+                <div className="mb-3">
+                    <Input
+                        label="Empresa"
+                        required
+                        type="text"
+                        placeholder="Nombre de la Empresa"
+                        value={date.Empresa}
+                        onChange={(e) => handleChanges('Empresa', e.target.value)}
+                        error={validated && !date.Empresa ? "Introduce un Nombre de la Empresa." : ""}
+                    />
+                </div>
+                <div className="mb-3">
+                    <Input
+                        label="Celular"
+                        required
+                        type="number"
+                        placeholder="Numero de Celular"
+                        value={date.Celular}
+                        onChange={(e) => handleChanges('Celular', e.target.value)}
+                        error={validated && !date.Celular ? "Introduzca el Numero de Celular." : ""}
+                    />
+                </div>
+                <div className="mb-3">
+                    <Input
+                        label="Direccion"
+                        required
+                        type="text"
+                        placeholder="Direccion de la Empresa"
+                        value={date.Direccion}
+                        onChange={(e) => handleChanges('Direccion', e.target.value)}
+                        error={validated && !date.Direccion ? "Introduce la Direccion." : ""}
+                    />
+                </div>
+            </form>
         </Modal>
     )
 }

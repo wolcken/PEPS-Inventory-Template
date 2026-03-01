@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from 'react-bootstrap'
+import { Button } from '../components/ui/Button'
 // @ts-ignore
 import RegisterInsumos from '../tools/RegisterInsumos';
 import InsumoList from '../components/InsumoList';
@@ -12,21 +12,18 @@ const Insumos = () => {
     const handleShowRegister = () => setShowRegister(true);
 
     return (
-        <>
-            <Button
-                className='mb-3'
-                variant="primary"
-                onClick={handleShowRegister}
-            >Nuevo Insumo</Button>
+        <div className="container mt-4">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="m-0">Lista de Insumos</h3>
+                <Button variant="primary" onClick={handleShowRegister}>Nuevo Insumo</Button>
+            </div>
 
             <RegisterInsumos
                 show={showRegister}
                 handleClose={handleCloseRegister}
             />
-
-            <h3>Lista de Insumos</h3>
             <InsumoList />
-        </>
+        </div>
     )
 }
 

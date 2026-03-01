@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Button, Form, Modal } from 'react-bootstrap'
+import { Button } from '../components/ui/Button';
+import { Modal } from '../components/ui/Modal';
+import { Input } from '../components/ui/Input';
 import apiObject from '../api/DBfirestore';
 
 const RegisterInsumos = ({ show, handleClose }) => {
@@ -59,78 +61,68 @@ const RegisterInsumos = ({ show, handleClose }) => {
         handleClose();
     }
 
+    const modalFooter = (
+        <div className="d-flex justify-content-between w-100 mt-2">
+            <Button variant='outline-primary' onClick={handleClear}>Limpiar</Button>
+            <Button variant='primary' onClick={handleSave}>Guardar</Button>
+        </div>
+    );
+
     return (
         <Modal
             show={show}
             onHide={handleExit}
             size="md"
             centered
+            title="Nuevo Registro de Insumo"
+            footer={modalFooter}
         >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Nuevo Registro
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form noValidate validated={validated}>
-                    <Form.Group controlId="validationCodigo">
-                        <Form.Label>Codigo</Form.Label>
-                        <Form.Control
-                            required
-                            type="text"
-                            placeholder="Nuevo Codigo"
-                            value={date.Codigo}
-                            onChange={(e) => handleChanges('Codigo', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce un Nuevo Codigo.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group controlId="validationMedicamento">
-                        <Form.Label>Medicamento</Form.Label>
-                        <Form.Control
-                            required
-                            type="text"
-                            placeholder="Nombre del Medicamento"
-                            value={date.Medicamento}
-                            onChange={(e) => handleChanges('Medicamento', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduzca el Nombre del Medicamento.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group controlId="validationDescripcion">
-                        <Form.Label>Descripcion</Form.Label>
-                        <Form.Control
-                            required
-                            type="text"
-                            placeholder="Descripcion del Medicamento"
-                            value={date.Descripcion}
-                            onChange={(e) => handleChanges('Descripcion', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce la Descripcion del Medicamento.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group controlId="validationCustom03">
-                        <Form.Label>Unidad de Medida</Form.Label>
-                        <Form.Control
-                            required
-                            type="text"
-                            placeholder="Unidad de Medida"
-                            value={date.UnidadMedida}
-                            onChange={(e) => handleChanges('UnidadMedida', e.target.value)}
-                        />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce la Unidad de Medida.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            <Modal.Footer style={{ justifyContent: 'space-between' }}>
-                <Button variant='secondary' onClick={handleClear}>Limpiar</Button>
-                <Button variant='primary' onClick={handleSave}>Guardar</Button>
-            </Modal.Footer>
+            <form onSubmit={handleSave} noValidate>
+                <div className="mb-3">
+                    <Input
+                        label="Codigo"
+                        required
+                        type="text"
+                        placeholder="Nuevo Codigo"
+                        value={date.Codigo}
+                        onChange={(e) => handleChanges('Codigo', e.target.value)}
+                        error={validated && !date.Codigo ? "Introduce un Nuevo Codigo." : ""}
+                    />
+                </div>
+                <div className="mb-3">
+                    <Input
+                        label="Nombre (Medicamento/Insumo)"
+                        required
+                        type="text"
+                        placeholder="Nombre del Medicamento / Insumo"
+                        value={date.Medicamento}
+                        onChange={(e) => handleChanges('Medicamento', e.target.value)}
+                        error={validated && !date.Medicamento ? "Introduzca el Nombre del Medicamento." : ""}
+                    />
+                </div>
+                <div className="mb-3">
+                    <Input
+                        label="Descripcion"
+                        required
+                        type="text"
+                        placeholder="Descripcion del Insumo"
+                        value={date.Descripcion}
+                        onChange={(e) => handleChanges('Descripcion', e.target.value)}
+                        error={validated && !date.Descripcion ? "Introduce la Descripcion." : ""}
+                    />
+                </div>
+                <div className="mb-3">
+                    <Input
+                        label="Unidad de Medida"
+                        required
+                        type="text"
+                        placeholder="Unidad de Medida"
+                        value={date.UnidadMedida}
+                        onChange={(e) => handleChanges('UnidadMedida', e.target.value)}
+                        error={validated && !date.UnidadMedida ? "Introduce la Unidad de Medida." : ""}
+                    />
+                </div>
+            </form>
         </Modal>
     )
 }

@@ -1,7 +1,6 @@
 import React from 'react'
-import { Table } from 'react-bootstrap'
 import apiObject from '../api/DBfirestore'
-import basura from '../assets/icons/basura.svg'
+import { TrashIcon } from '../components/ui/Icons'
 
 const InsumoList = () => {
 
@@ -19,41 +18,42 @@ const InsumoList = () => {
     }
 
     return (
-        <div style={{ margin: 10 }}>
-            <Table striped bordered hover>
-                <thead>
+        <div className="table-responsive card mt-3 p-0 shadow-sm border-0">
+            <table className="table table-striped table-hover m-0">
+                <thead className="table-light">
                     <tr>
-                        <th>#</th>
+                        <th className="px-3">#</th>
                         <th>Codigo</th>
-                        <th>Medicamento</th>
+                        <th>Nombre</th>
                         <th>Descripcion</th>
                         <th>Unidad Medida</th>
-                        <th>Opciones</th>
+                        <th className="text-center">Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {listInsumos?.map((insumo, index) => (
-                        <tr key={insumo.id}>
-                            <td>{index}</td>
-                            <td>{insumo.Codigo}</td>
-                            <td>{insumo.Medicamento}</td>
+                        <tr key={insumo.id} className="align-middle">
+                            <td className="px-3 fw-medium text-muted">{index + 1}</td>
+                            <td className="fw-semibold text-primary">{insumo.Codigo}</td>
+                            <td className="fw-semibold">{insumo.Nombre || insumo.Medicamento}</td>
                             <td>{insumo.Descripcion}</td>
                             <td>{insumo.UnidadMedida}</td>
-                            <td>
-                                <div>
-                                    <img
-                                        src={basura}
-                                        alt='basura'
-                                        className='icon-table basura'
-                                        onClick={() => handleDelete(insumo.id)}
-                                        style={{ width: 20 }}
-                                    />
-                                </div>
+                            <td className="text-center">
+                                <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => handleDelete(insumo.id)} title="Eliminar Insumo">
+                                    <TrashIcon size={20} />
+                                </button>
                             </td>
                         </tr>
                     ))}
+                    {(!listInsumos || listInsumos.length === 0) && (
+                        <tr>
+                            <td colSpan={6} className="text-center py-4 text-muted">
+                                No hay insumos registrados.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
-            </Table>
+            </table>
         </div>
     )
 }

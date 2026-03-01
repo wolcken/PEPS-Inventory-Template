@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { Form } from 'react-bootstrap'
 import apiObject from '../api/DBfirestore'
 import { ListKardexInventory } from '../utils/ListKardexInventory';
 import KardexTable from '../components/KardexTable';
@@ -34,26 +33,26 @@ const Kardex = () => {
     }
 
     return (
-        <>
-            <h3>Kardex Inventario</h3>
-            <Form className='m-3'>
-                <Form.Select value={insumo} onChange={handleInsumo} className='mb-3'>
+        <div className="container mt-4">
+            <h3 className="mb-4">Kardex Inventario</h3>
+            <form className='mb-4'>
+                <select value={insumo} onChange={handleInsumo} className='form-select mb-4'>
                     <option>Open this select menu</option>
                     {listInsumos.map((insimo: any, index: number) => (
                         <option key={index} value={JSON.stringify(insimo)}>{insimo.Codigo} - {insimo.Nombre || insimo.Medicamento}</option>
                     ))}
-                </Form.Select>
+                </select>
                 {insumo !== '' && nombre !== ''
                     ?
-                    <>
-                        <h4>Codigo: {insumo}</h4>
-                        <h4>Nombre: {nombre}</h4>
-                    </>
+                    <div className="mb-4 p-3 bg-surface border rounded">
+                        <h4 className="m-0 text-primary">Codigo: {insumo}</h4>
+                        <h4 className="m-0 text-primary mt-2">Nombre: {nombre}</h4>
+                    </div>
                     :
                     null}
-                {insumo !== '' ? <KardexTable listMov={list} codigo={insumo} medicamento={nombre} /> : <><img src={vacio} alt="gif" /></>}
-            </Form>
-        </>
+                {insumo !== '' ? <KardexTable listMov={list} codigo={insumo} medicamento={nombre} /> : <div className="text-center mt-5"><img src={vacio} alt="empty state gif" style={{ maxWidth: '200px', opacity: 0.5 }} /></div>}
+            </form>
+        </div>
     )
 }
 

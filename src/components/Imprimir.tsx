@@ -1,5 +1,5 @@
 import React from 'react'
-import impresora from '../assets/images/impresora.png'
+import { PrintIcon } from '../components/ui/Icons'
 // @ts-ignore
 import { Movimientos } from '../tools/pdf/Movimientos'
 
@@ -10,18 +10,19 @@ const Imprimir = ({ items, title }: any) => {
     }
 
     return (
-        <img
-            src={impresora}
-            alt="imprimir"
+        <div
             style={{
                 position: 'absolute',
-                width: 40,
                 top: 65,
                 right: 20,
-                cursor: 'pointer'
+                cursor: 'pointer',
+                color: 'var(--text-secondary)'
             }}
             onClick={handlePDF}
-        />
+            title="Imprimir"
+        >
+            <PrintIcon size={40} />
+        </div>
     )
 }
 

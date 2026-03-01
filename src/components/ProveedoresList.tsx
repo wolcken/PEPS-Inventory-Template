@@ -1,7 +1,6 @@
 import React from 'react'
-import { Table } from 'react-bootstrap'
 import apiObject from '../api/DBfirestore'
-import basura from '../assets/icons/basura.svg'
+import { TrashIcon } from '../components/ui/Icons'
 
 const ProveedoresList = () => {
 
@@ -19,39 +18,40 @@ const ProveedoresList = () => {
     }
 
     return (
-        <div style={{ margin: 10 }}>
-            <Table striped bordered hover>
-                <thead>
+        <div className="table-responsive card mt-3 p-0 shadow-sm border-0">
+            <table className="table table-striped table-hover m-0">
+                <thead className="table-light">
                     <tr>
-                        <th>#</th>
+                        <th className="px-3">#</th>
                         <th>Empresa</th>
                         <th>Celular</th>
                         <th>Direccion</th>
-                        <th>Opciones</th>
+                        <th className="text-center">Opciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     {listProviders?.map((insumo, index) => (
-                        <tr key={insumo.id}>
-                            <td>{index}</td>
-                            <td>{insumo.Empresa}</td>
+                        <tr key={insumo.id} className="align-middle">
+                            <td className="px-3 fw-medium text-muted">{index + 1}</td>
+                            <td className="fw-semibold">{insumo.Empresa}</td>
                             <td>{insumo.Celular}</td>
                             <td>{insumo.Direccion}</td>
-                            <td>
-                                <div>
-                                    <img
-                                        src={basura}
-                                        alt='basura'
-                                        className='icon-table basura'
-                                        onClick={() => handleDelete(insumo.id)}
-                                        style={{ width: 20 }}
-                                    />
-                                </div>
+                            <td className="text-center">
+                                <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => handleDelete(insumo.id)} title="Eliminar Proveedor">
+                                    <TrashIcon size={20} />
+                                </button>
                             </td>
                         </tr>
                     ))}
+                    {(!listProviders || listProviders.length === 0) && (
+                        <tr>
+                            <td colSpan={5} className="text-center py-4 text-muted">
+                                No hay proveedores registrados.
+                            </td>
+                        </tr>
+                    )}
                 </tbody>
-            </Table>
+            </table>
         </div>
     )
 }

@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Table, Button } from 'react-bootstrap';
+import { Button } from '../components/ui/Button';
 import apiObject from '../api/DBfirestore';
 import Imprimir from '../components/Imprimir';
 import Low from '../components/Low';
-import BasuraIcon from '../assets/icons/basura.svg';
+import { TrashIcon } from '../components/ui/Icons';
 
 const Entradas = () => {
     const listKardexEntrada = apiObject.useKardexEntrada();
@@ -75,75 +75,69 @@ const Entradas = () => {
     };
 
     return (
-        <>
-            <div style={{ margin: 10 }}>
-                <h3>Entradas</h3>
-                <Table striped bordered hover responsive>
-                    <thead>
+        <div className="container mt-4">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="m-0">Entradas</h3>
+            </div>
+
+            <div className="table-responsive card p-0 shadow-sm border-0">
+                <table className="table table-striped table-hover m-0">
+                    <thead className="table-light">
                         <tr>
-                            <th style={{ background: '#89E3B7' }}>#</th>
-                            <th style={{ background: '#89E3B7' }}>Insumo</th>
-                            <th style={{ background: '#89E3B7' }}>Fecha</th>
-                            <th style={{ background: '#89E3B7' }}>Cantidad</th>
-                            <th style={{ background: '#89E3B7' }}>Precio Unitario</th>
-                            <th style={{ background: '#89E3B7' }}>Costo Unitario Neto</th>
-                            <th style={{ background: '#ffbdbd' }}>Acciones</th>
+                            <th className="px-3">#</th>
+                            <th>Insumo</th>
+                            <th>Fecha</th>
+                            <th>Cantidad</th>
+                            <th>Precio Unitario</th>
+                            <th>Costo Unitario Neto</th>
+                            <th className="text-center">Acciones</th>
                         </tr>
                     </thead>
                     <tbody>
                         {currentItems.length > 0 ? (
                             currentItems.map((kardex, index) => (
-                                <tr key={kardex.id}>
-                                    <td>{indexOfFirstItem + index + 1}</td>
-                                    <td>{kardex.Codigo}</td>
+                                <tr key={kardex.id} className="align-middle">
+                                    <td className="px-3 fw-medium text-muted">{indexOfFirstItem + index + 1}</td>
+                                    <td className="fw-semibold text-primary">{kardex.Codigo}</td>
                                     <td>{kardex.FechaString}</td>
                                     <td>{kardex.Cantidad}</td>
                                     <td>{kardex.Precio_Unitario}</td>
                                     <td>{kardex.Costo_Unitario_Neto}</td>
-                                    <td>
-                                        <img
-                                            src={BasuraIcon}
-                                            alt="Eliminar"
-                                            onClick={() => handleDelete(kardex.id)}
-                                            style={{
-                                                width: 24,
-                                                height: 24,
-                                                cursor: 'pointer',
-                                                transition: 'transform 0.2s',
-                                            }}
-                                            onMouseOver={e => e.currentTarget.style.transform = 'scale(1.2)'}
-                                            onMouseOut={e => e.currentTarget.style.transform = 'scale(1.0)'}
-                                        />
+                                    <td className="text-center">
+                                        <button className="btn btn-sm btn-icon border-0 bg-transparent text-danger p-1" onClick={() => handleDelete(kardex.id)} title="Eliminar Entrada">
+                                            <TrashIcon size={20} />
+                                        </button>
                                     </td>
                                 </tr>
                             ))
                         ) : (
                             <tr>
-                                <td colSpan={7} className="text-center">
+                                <td colSpan={7} className="text-center py-4 text-muted">
                                     No hay registros disponibles.
                                 </td>
                             </tr>
                         )}
                     </tbody>
-                </Table>
+                </table>
+            </div>
 
-                <div className="d-flex justify-content-center mt-3">
-                    {Array.from({ length: totalPages }, (_, index) => (
-                        <Button
-                            key={index}
-                            variant={currentPage === index + 1 ? 'primary' : 'secondary'}
-                            onClick={() => handlePageChange(index + 1)}
-                            className="mx-1"
-                        >
-                            {index + 1}
-                        </Button>
-                    ))}
-                </div>
+            <div className="d-flex justify-content-center mt-4 gap-2">
+                {Array.from({ length: totalPages }, (_, index) => (
+                    <Button
+                        key={index}
+                        variant={currentPage === index + 1 ? 'primary' : 'outline'}
+                        onClick={() => handlePageChange(index + 1)}
+                    >
+                        {index + 1}
+                    </Button>
+                ))}
             </div>
 
             <Low show={show} handleClose={handleClose} mincad={sortedLowStock} />
-            <Imprimir items={items} title="Entradas" />
-        </>
+            <div className="mt-4">
+                <Imprimir items={items} title="Entradas" />
+            </div>
+        </div>
     );
 };
 

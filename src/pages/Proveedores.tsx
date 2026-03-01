@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import ProveedoresList from '../components/ProveedoresList';
-import { Button } from 'react-bootstrap';
+import { Button } from '../components/ui/Button';
 // @ts-ignore
 import RegisterProviders from '../tools/RegisterProviders';
 
@@ -12,21 +12,18 @@ const Proveedores = () => {
     const handleShowProvider = () => setShowProvider(true);
 
     return (
-        <>
-            <Button
-                className='mb-3'
-                variant="primary"
-                onClick={handleShowProvider}
-            >Nuevo Proveedor</Button>
+        <div className="container mt-4">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h3 className="m-0">Lista de Proveedores</h3>
+                <Button variant="primary" onClick={handleShowProvider}>Nuevo Proveedor</Button>
+            </div>
 
             <RegisterProviders
                 show={showProvider}
                 handleClose={handleCloseProvider}
             />
-
-            <h3>Lista de Proveedores</h3>
             <ProveedoresList />
-        </>
+        </div>
     )
 }
 

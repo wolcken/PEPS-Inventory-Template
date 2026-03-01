@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button } from '../components/ui/Button';
+import { Input } from '../components/ui/Input';
+import { Select } from '../components/ui/Select';
 import apiObject from '../api/DBfirestore';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -155,166 +157,144 @@ const KardexEntrada = () => {
     }
 
     return (
-        <>
-            <h3>Kardex de Entrada</h3>
-            <Form className='m-3' noValidate validated={validated} onSubmit={handleSubmit}>
-                <Form.Select className='mb-3' value={optionInsumo.id} onChange={handleSelectInsumo} >
-                    <option >Selecciona un Insumo</option>
-                    {listInsumos.map((insumo) => (
-                        <option key={insumo.id} value={insumo.id} >{insumo.Codigo}</option>
-                    ))}
-                </Form.Select>
-                {optionInsumo.id !== '' ?
-                    <div>
-                        <h5>
-                            Item Seleccionado
-                        </h5>
-                        <h6>Codigo: {optionInsumo.Codigo}</h6>
-                        <h6>Nombre: {optionInsumo.Nombre}</h6>
-                        <h6>Unidad de Medida: {optionInsumo.UnidadMedida}</h6>
+        <div className="container mt-4">
+            <h3 className="mb-4">Kardex de Entrada</h3>
+            <form className='card p-4 shadow-sm bg-surface' noValidate onSubmit={handleSubmit}>
+                <h5 className="mb-3 border-bottom pb-2">Selección de Insumo</h5>
+                <Select
+                    className='mb-4'
+                    value={optionInsumo.id}
+                    onChange={handleSelectInsumo}
+                    options={listInsumos.map((i: any) => ({ value: i.id, label: `${i.Codigo} - ${i.Nombre || i.Medicamento}` }))}
+                />
+
+                {optionInsumo.id !== '' && (
+                    <div className="mb-4 p-3 bg-surface border rounded">
+                        <h6 className="text-secondary mb-1">Item Seleccionado</h6>
+                        <div className="font-semibold text-primary">{optionInsumo.Codigo} - {optionInsumo.Nombre}</div>
+                        <div className="text-muted small">Medida: {optionInsumo.UnidadMedida}</div>
                     </div>
-                    :
-                    null
-                }
-                <Row className="mb-3">
-                    <Form.Group as={Col} md="6" controlId="validationCustom02">
-                        <Form.Label>Fecha de Registro</Form.Label>
-                        <Form.Control
+                )}
+
+                <h5 className="mb-3 border-bottom pb-2 mt-4">Datos de Entrada</h5>
+
+                <div className="d-flex flex-wrap gap-4 mb-3">
+                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                        <Input
+                            label="Fecha de Registro"
                             required
                             type="text"
                             placeholder="Fecha"
                             value={dates.FechaString}
                             disabled
-                            onChange={(e) => handleChanges('Fecha', e.target.value)}
+                            onChange={(e) => handleChanges('FechaString', e.target.value)}
+                            error={validated && !dates.FechaString ? "Elige la Fecha." : ""}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Elige la Fecha.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md="6" controlId="validationCustomUsername">
-                        <Form.Label>NIT</Form.Label>
-                        <Form.Control
+                    </div>
+                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                        <Input
+                            label="NIT del Proveedor"
                             required
                             type="number"
                             placeholder="NIT"
                             value={dates.Nit}
                             onChange={(e) => handleChanges('Nit', e.target.value)}
+                            error={validated && !dates.Nit ? "Introduce el NIT." : ""}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce el NIT.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                    <Form.Group as={Col} md="6" controlId="validationCustom03">
-                        <Form.Label>Proveedor</Form.Label>
-                        <Form.Select className='mb-3' value={optionProvider} onChange={handleSelectProvider}>
-                            <option>Selecciona un Proveedor</option>
-                            {listProviders.map((provider) => (
-                                <option key={provider.id} value={provider.id} >{provider.Empresa}</option>
-                            ))}
-                        </Form.Select>
-                    </Form.Group>
-                    <Form.Group as={Col} md="6" controlId="validationCustom04">
-                        <Form.Label>Factura N°</Form.Label>
-                        <Form.Control
+                    </div>
+                </div>
+
+                <div className="d-flex flex-wrap gap-4 mb-3">
+                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                        <Select
+                            label="Proveedor"
+                            value={optionProvider}
+                            onChange={handleSelectProvider}
+                            options={listProviders.map((p: any) => ({ value: p.id, label: p.Empresa }))}
+                        />
+                    </div>
+                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
+                        <Input
+                            label="Factura N°"
                             required
                             type="number"
                             placeholder="Factura N°"
                             value={dates.Factura}
                             onChange={(e) => handleChanges('Factura', e.target.value)}
+                            error={validated && !dates.Factura ? "Introduce Factura." : ""}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce el N° de Factura.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                    <Form.Group as={Col} md="4" controlId="validationCustom03">
-                        <Form.Label>Precio Unitario</Form.Label>
-                        <Form.Control
+                    </div>
+                </div>
+
+                <div className="d-flex flex-wrap gap-4 mb-3">
+                    <div className="flex-grow-1" style={{ minWidth: '200px' }}>
+                        <Input
+                            label="Precio Unitario (Bruto)"
                             required
                             type="number"
-                            placeholder="Precio Unitario"
+                            placeholder="0.00"
                             value={dates.Precio_Unitario}
                             onChange={(e) => handlePrecioUnitario(e.target.value)}
+                            error={validated && !dates.Precio_Unitario ? "Introduce Precio." : ""}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce el Precio Unitario.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md="4" controlId="validationCustom04">
-                        <Form.Label>Cantidad</Form.Label>
-                        <Form.Control
+                    </div>
+                    <div className="flex-grow-1" style={{ minWidth: '200px' }}>
+                        <Input
+                            label="Cantidad"
                             required
                             type="number"
-                            placeholder="Cantidad"
+                            placeholder="0"
                             value={dates.Cantidad}
                             onChange={(e) => handleCantidad(e.target.value)}
+                            error={validated && !dates.Cantidad ? "Introduce Cantidad." : ""}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce la Cantidad.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md="4" controlId="validationCustom05">
+                    </div>
+                    <div className="flex-grow-1" style={{ minWidth: '250px' }}>
                         <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DemoContainer components={['DatePicker']}>
+                            <DemoContainer components={['DatePicker']} sx={{ pt: 1 }}>
                                 <DatePicker
                                     label="Fecha de Caducidad"
                                     value={dayjs(dates.Caducidad)}
                                     onChange={(newValue) => handleCaducidad(newValue)}
+                                    sx={{ width: '100%' }}
                                 />
                             </DemoContainer>
                         </LocalizationProvider>
-                    </Form.Group>
-                </Row>
-                <Row className="mb-3">
-                    <Form.Group as={Col} md="4" controlId="validationCustom03">
-                        <Form.Label>Total Operación</Form.Label>
-                        <Form.Control
-                            required
+                    </div>
+                </div>
+
+                <div className="d-flex flex-wrap gap-4 mb-4 p-3 bg-light rounded mt-4 border">
+                    <div className="flex-grow-1">
+                        <Input
+                            label="Total Operación (Bruto)"
                             type="text"
-                            placeholder="Total Operación"
                             value={dates.Total_Operacion}
                             disabled
-                            onChange={(e) => handleChanges('Total_Operacion', e.target.value)}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce el Total Operación.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md="4" controlId="validationCustom04">
-                        <Form.Label>Valor Neto</Form.Label>
-                        <Form.Control
-                            required
+                    </div>
+                    <div className="flex-grow-1">
+                        <Input
+                            label="Valor Neto (Calculado)"
                             type="text"
-                            placeholder="Valor Neto"
                             value={dates.Valor_Neto}
                             disabled
-                            onChange={(e) => handleChanges('Valor_Neto', e.target.value)}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce el Valor Neto.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                    <Form.Group as={Col} md="4" controlId="validationCustom05">
-                        <Form.Label>Costo Unitario Neto</Form.Label>
-                        <Form.Control
-                            required
+                    </div>
+                    <div className="flex-grow-1">
+                        <Input
+                            label="Costo Unitario Neto"
                             type="text"
-                            placeholder="Costo Unitario Neto"
                             value={dates.Costo_Unitario_Neto}
                             disabled
-                            onChange={(e) => handleChanges('Costo_Unitario_Neto', e.target.value)}
                         />
-                        <Form.Control.Feedback type="invalid">
-                            Introduce el Costo Unitario Neto.
-                        </Form.Control.Feedback>
-                    </Form.Group>
-                </Row>
-                <Button type="submit">Registrar</Button>
-            </Form>
-        </>
+                    </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-top text-right">
+                    <Button type="submit" variant="primary" size="lg">Registrar Entrada al Inventario</Button>
+                </div>
+            </form>
+        </div>
     )
 }
 
